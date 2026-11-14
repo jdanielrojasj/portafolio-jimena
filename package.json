@@ -1,0 +1,5 @@
+{
+  "name": "portafolio-jimena",
+  "private": true,
+  "workspaces": ["web", "studio"]
+}
