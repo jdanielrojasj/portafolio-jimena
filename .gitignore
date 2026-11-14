@@ -10,3 +10,4 @@ material/
 test-results/
 playwright-report/
 .impeccable/
+dist-e2e/

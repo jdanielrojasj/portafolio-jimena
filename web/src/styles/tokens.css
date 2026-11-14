@@ -1,0 +1,38 @@
+:root {
+  /* Color */
+  --paper: #f6f1ea;
+  --paper-2: #ede6db;
+  --ink: #1b1a18;
+  --ink-soft: #57504a;
+  --line: #d9cfc1;
+  --dark: #161514;
+  --dark-2: #23211f;
+  --on-dark: #f6f1ea;
+  --on-dark-soft: #c4bbae;
+  --line-dark: #3b3733;
+  /* Color de acento: provisional hasta que lo elija Jimena. */
+  --accent: #a8452f;
+  --accent-on-dark: #e9a48f;
+
+  /* Tipografía */
+  --font-display: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: clamp(1.2rem, 1.05rem + 0.7vw, 1.5rem);
+  --text-xl: clamp(1.75rem, 1.3rem + 2.2vw, 2.75rem);
+  --text-2xl: clamp(2.4rem, 1.5rem + 4.6vw, 4.75rem);
+  --text-hero: clamp(3.4rem, 0.6rem + 15.5vw, 12.5rem);
+
+  /* Espacio */
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --section-y: clamp(4rem, 2.5rem + 7vw, 9rem);
+  --max: 82rem;
+  --header-h: 3.75rem;
+
+  --radius: 0.875rem;
+  --radius-sm: 0.5rem;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

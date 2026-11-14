@@ -1,0 +1,46 @@
+---
+import '@fontsource-variable/fraunces'
+import '@fontsource-variable/inter'
+import '../styles/global.css'
+import { LOCALES, localePath, type Locale } from '../lib/i18n'
+
+interface Props {
+  locale: Locale
+  title: string
+  description: string
+  /** Imagen que se ve al compartir el enlace. */
+  ogImage?: string
+}
+
+const { locale, title, description, ogImage } = Astro.props
+// Con dirección pública conocida, los enlaces entre idiomas son absolutos.
+const abs = (path: string) => (Astro.site ? new URL(path, Astro.site).href : path)
+---
+
+<!doctype html>
+<html lang={locale} class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f6f1ea" />
+    <link rel="canonical" href={abs(localePath(locale))} />
+    {LOCALES.map((l) => <link rel="alternate" hreflang={l} href={abs(localePath(l))} />)}
+    <link rel="alternate" hreflang="x-default" href={abs(localePath('es'))} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={locale === 'es' ? 'es_ES' : 'en_GB'} />
+    <meta property="og:url" content={abs(localePath(locale))} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline>
+      document.documentElement.classList.replace('no-js', 'js')
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

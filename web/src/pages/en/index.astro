@@ -1,0 +1,8 @@
+---
+import HomePage from '../../components/HomePage.astro'
+import { getSiteData } from '../../lib/site-data'
+
+const data = await getSiteData('en')
+---
+
+<HomePage data={data} />

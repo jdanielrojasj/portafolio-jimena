@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro'
+import Header from './Header.astro'
+import { t, type UiKey } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale } = data
+
+const role = data.tagline || t(locale, 'meta.role')
+
+// Solo se enlazan en el menú las secciones que tienen contenido.
+const sections: { id: string; label: UiKey }[] = [
+  { id: 'contacto', label: 'nav.contact' },
+]
+---
+
+<Base locale={locale} title={`Jimena Melendez — ${role}`} description={role} ogImage={data.heroPhotos[0]?.url}>
+  <a class="skip-link" href="#contenido">{locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
+  <Header locale={locale} sections={sections} />
+  <main id="contenido"></main>
+</Base>
