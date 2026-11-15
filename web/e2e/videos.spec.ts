@@ -101,3 +101,16 @@ test('un título de 90 caracteres no desborda a 320 px', async ({ page }) => {
   expect(await item.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true)
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320)
 })
+
+test('en inglés, lo que solo está en español va marcado como español', async ({ page }) => {
+  await page.goto('/en/')
+  await expect(page.locator('[data-video-item]:has([data-id="sin-en"]) h3')).toHaveAttribute('lang', 'es')
+  await expect(page.locator('[data-video-item]:has([data-id="destacado"]) h3')).not.toHaveAttribute('lang', /.+/)
+  await expect(page.getByRole('button', { name: 'Unboxing', exact: true })).toHaveAttribute('lang', 'es')
+  await expect(page.locator('#servicios [data-service]').nth(1).locator('p')).toHaveAttribute('lang', 'es')
+})
+
+test('en español no se añade lang a los textos', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('main [lang]')).toHaveCount(0)
+})

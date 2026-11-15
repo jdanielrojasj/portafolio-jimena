@@ -14,6 +14,8 @@ export interface Img {
 export interface VideoItem {
   id: string
   title: string
+  /** 'es' si el título cayó al español en otra versión. */
+  titleLang?: Locale
   /** Identificador del tipo de vídeo; cadena vacía si no tiene. */
   category: string
   brand?: string
@@ -21,6 +23,7 @@ export interface VideoItem {
   posterUrl?: string
   posterPosition?: string
   description: string
+  descriptionLang?: Locale
   featured: boolean
 }
 
@@ -32,6 +35,7 @@ export interface ActingItem {
   year?: number
   company: string
   description: string
+  descriptionLang?: Locale
   photos: Img[]
   videoUrl?: string
 }
@@ -39,22 +43,26 @@ export interface ActingItem {
 export interface SiteData {
   locale: Locale
   tagline: string
+  taglineLang?: Locale
   marqueeWords: string[]
   heroPhotos: Img[]
   heroVideoUrl?: string
   /** Solo los tipos que tienen al menos un vídeo. */
-  categories: { slug: string; title: string }[]
+  categories: { slug: string; title: string; lang?: Locale }[]
   /** Destacados primero; después por `order`. */
   videos: VideoItem[]
   showBrands: boolean
   brands: { name: string; logoUrl?: string }[]
-  services: { name: string; description: string }[]
+  services: { name: string; nameLang?: Locale; description: string; descriptionLang?: Locale }[]
   /** Del más reciente al más antiguo. */
   actingWorks: ActingItem[]
   showCasting: boolean
   casting: { height: string; hair: string; eyes: string }
   aboutText: string
+  aboutLang?: Locale
   aboutPhoto?: Img
+  /** Foto para la vista previa al compartir el enlace. */
+  shareImage?: Img
   languages: string[]
   email: string
   instagramUrl: string
@@ -82,6 +90,7 @@ export interface RawSettings {
   heroVideoUrl?: Maybe<string>
   aboutText?: Localized
   aboutPhoto?: Maybe<RawImg>
+  shareImage?: Maybe<RawImg>
   languages?: Maybe<Localized[]>
   email?: Maybe<string>
   instagramUrl?: Maybe<string>

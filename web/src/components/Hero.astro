@@ -12,6 +12,8 @@ const { locale, heroPhotos, heroVideoUrl } = data
 const [left, right] = heroPhotos
 const pieces = [left, heroVideoUrl ? 'video' : undefined, right].filter(Boolean).length
 const tagline = data.tagline || t(locale, 'meta.role')
+// Hay algo que se mueve solo: el montaje de portada o la franja de palabras.
+const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
 ---
 
 <section id="portada" class="hero" data-hero>
@@ -22,7 +24,7 @@ const tagline = data.tagline || t(locale, 'meta.role')
     </h1>
 
     <div class="intro" data-hero-intro>
-      <p class="tagline">{tagline}</p>
+      <p class="tagline" lang={data.tagline ? data.taglineLang : undefined}>{tagline}</p>
       <a class="button" href="#contacto">
         {t(locale, 'cta.work')}
         <span class="arrow" aria-hidden="true">→</span>
@@ -46,7 +48,7 @@ const tagline = data.tagline || t(locale, 'meta.role')
                 playsinline
                 preload="metadata"
                 disablepictureinpicture
-                aria-label={locale === 'es' ? 'Montaje de vídeos de Jimena Melendez' : 'Showreel of Jimena Melendez'}
+                aria-label={t(locale, 'hero.reel')}
                 data-hero-video
               />
             </figure>
@@ -59,10 +61,57 @@ const tagline = data.tagline || t(locale, 'meta.role')
         </div>
       )
     }
+
+    {
+      moves && (
+        // Oculto hasta que el script lo activa: sin JavaScript o con
+        // movimiento reducido, nada se mueve solo y no hace falta.
+        <button class="motion-toggle" type="button" aria-pressed="false" data-motion-toggle hidden>
+          <svg class="icon-pause" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" />
+          </svg>
+          <svg class="icon-play" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+            <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+          </svg>
+          <span>{t(locale, 'motion.pause')}</span>
+        </button>
+      )
+    }
   </div>
 </section>
 
 <style>
+  .motion-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin: clamp(1rem, 3vw, 1.75rem) 0 0 auto;
+    padding: 0.5rem 0.25rem;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .motion-toggle[hidden] {
+    display: none;
+  }
+
+  .motion-toggle:hover {
+    color: var(--ink);
+  }
+
+  .motion-toggle .icon-play,
+  .motion-toggle[aria-pressed='true'] .icon-pause {
+    display: none;
+  }
+
+  .motion-toggle[aria-pressed='true'] .icon-play {
+    display: block;
+  }
+
   .hero {
     padding-top: calc(var(--header-h) + clamp(1.25rem, 4vw, 3rem));
     padding-bottom: clamp(3rem, 8vw, 7rem);

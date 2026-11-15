@@ -26,7 +26,7 @@ const titleOf = (slug: string) => categories.find((c) => c.slug === slug)?.title
             {t(locale, 'filter.all')}
           </button>
           {categories.map((c) => (
-            <button class="filter" type="button" aria-pressed="false" data-filter={c.slug}>
+            <button class="filter" type="button" aria-pressed="false" data-filter={c.slug} lang={c.lang}>
               {c.title}
             </button>
           ))}

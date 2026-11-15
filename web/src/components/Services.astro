@@ -13,7 +13,7 @@ const number = (i: number) => String(i + 1).padStart(2, '0')
 <section id="servicios" class="section" data-reveal>
   <div class="wrap layout">
     <div class="section-head">
-      <p class="eyebrow">{data.locale === 'es' ? 'Qué ofrezco' : 'What I offer'}</p>
+      <p class="eyebrow">{t(data.locale, 'services.eyebrow')}</p>
       <h2 class="display">{t(data.locale, 'section.services')}</h2>
     </div>
 
@@ -25,8 +25,8 @@ const number = (i: number) => String(i + 1).padStart(2, '0')
               {number(i)}
             </span>
             <div>
-              <h3>{service.name}</h3>
-              {service.description && <p>{service.description}</p>}
+              <h3 lang={service.nameLang}>{service.name}</h3>
+              {service.description && <p lang={service.descriptionLang}>{service.description}</p>}
             </div>
           </li>
         ))

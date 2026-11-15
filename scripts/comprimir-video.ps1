@@ -12,17 +12,27 @@
 
 .EXAMPLE
   .\scripts\comprimir-video.ps1 -Entrada material\marcas
+
+.EXAMPLE
+  .\scripts\comprimir-video.ps1 -Entrada material\montaje.mov -Portada
+  Versión ligera para el vídeo de portada: sin sonido y de menos de 8 MB.
 #>
 param(
   [Parameter(Mandatory = $true, Position = 0)]
   [string]$Entrada,
 
   [Parameter(Position = 1)]
-  [string]$Salida
+  [string]$Salida,
+
+  # Vídeo de portada: se repite sin sonido, así que va sin audio y más comprimido.
+  [switch]$Portada
 )
 
 $ErrorActionPreference = 'Stop'
-$LimiteMB = 100
+$LimiteMB = if ($Portada) { 8 } else { 100 }
+$Calidad = if ($Portada) { 28 } else { 23 }
+$Audio = if ($Portada) { @('-an') } else { @('-c:a', 'aac', '-b:a', '128k') }
+$Sufijo = if ($Portada) { '-portada' } else { '' }
 $Extensiones = @('.mp4', '.mov', '.m4v', '.avi', '.mkv', '.webm')
 
 if (-not (Get-Command ffmpeg -ErrorAction SilentlyContinue)) {
@@ -61,7 +71,7 @@ $demasiadoGrandes = 0
 $fallidos = 0
 
 foreach ($video in $videos) {
-  $destino = Join-Path $Salida ($video.BaseName + '.mp4')
+  $destino = Join-Path $Salida ($video.BaseName + $Sufijo + '.mp4')
 
   if ($destino -eq $video.FullName) {
     Write-Host "Omitido (la carpeta de salida es la del original): $($video.Name)" -ForegroundColor Yellow
@@ -73,10 +83,10 @@ foreach ($video in $videos) {
   }
 
   Write-Host "Comprimiendo $($video.Name)..."
-  # -n: ffmpeg nunca sobrescribe un archivo existente.
-  & ffmpeg -hide_banner -loglevel error -n -i $video.FullName `
-    -vf $filtro -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p `
-    -c:a aac -b:a 128k -movflags +faststart $destino
+  # -n: ffmpeg nunca sobrescribe un archivo existente. -stats muestra el progreso.
+  & ffmpeg -hide_banner -loglevel error -stats -n -i $video.FullName `
+    -vf $filtro -c:v libx264 -preset slow -crf $Calidad -pix_fmt yuv420p `
+    @Audio -movflags +faststart $destino
 
   if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $destino)) {
     Write-Host "  No se pudo comprimir $($video.Name)." -ForegroundColor Red
@@ -86,7 +96,11 @@ foreach ($video in $videos) {
 
   $mb = [math]::Round((Get-Item -LiteralPath $destino).Length / 1MB, 1)
   if ($mb -ge $LimiteMB) {
-    Write-Host "  $mb MB: supera el límite de $LimiteMB MB y el panel no lo aceptará. Recorta el vídeo y repite." -ForegroundColor Red
+    if ($Portada) {
+      Write-Host "  $mb MB: para la portada debe pesar menos de $LimiteMB MB. Recórtalo a unos 10 segundos y repite." -ForegroundColor Red
+    } else {
+      Write-Host "  $mb MB: supera el límite de $LimiteMB MB y el panel no lo aceptará. Recorta el vídeo y repite." -ForegroundColor Red
+    }
     $demasiadoGrandes++
   } else {
     Write-Host "  Listo: $destino ($mb MB)" -ForegroundColor Green

@@ -67,3 +67,43 @@ test('al hacer scroll las piezas de la portada se desplazan a distinta velocidad
     })
     .toBe(3)
 })
+
+test('el botón de pausa detiene el vídeo de portada y la franja, y vuelve a ponerlos en marcha', async ({ page }) => {
+  await page.goto('/')
+  const button = page.getByRole('button', { name: 'Pausar movimiento' })
+  await expect(button).toBeVisible()
+  await expect(button).toHaveAttribute('aria-pressed', 'false')
+  const track = page.locator('[data-marquee] .track')
+  expect(await track.evaluate((el) => getComputedStyle(el).animationPlayState)).toBe('running')
+
+  await button.click()
+  await expect(button).toHaveAttribute('aria-pressed', 'true')
+  expect(await track.evaluate((el) => getComputedStyle(el).animationPlayState)).toBe('paused')
+  expect(await page.locator('#portada video').evaluate((v: HTMLVideoElement) => v.paused)).toBe(true)
+
+  await button.click()
+  await expect(button).toHaveAttribute('aria-pressed', 'false')
+  expect(await track.evaluate((el) => getComputedStyle(el).animationPlayState)).toBe('running')
+})
+
+test('la pausa se mantiene al cerrar el reproductor', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Pausar movimiento' }).click()
+  await page.locator('[data-video-card]').first().click()
+  await page.keyboard.press('Escape')
+  await expect(page.locator('dialog[open]')).toHaveCount(0)
+  expect(await page.locator('#portada video').evaluate((v: HTMLVideoElement) => v.dataset.resumed)).toBeUndefined()
+})
+
+test('con movimiento reducido no hace falta el botón de pausa', async ({ browser }) => {
+  const context = await browser.newContext({ reducedMotion: 'reduce' })
+  const page = await context.newPage()
+  await page.goto('/')
+  await expect(page.getByRole('button', { name: 'Pausar movimiento' })).toBeHidden()
+  await context.close()
+})
+
+test('en inglés el botón de pausa está traducido', async ({ page }) => {
+  await page.goto('/en/')
+  await expect(page.getByRole('button', { name: 'Pause motion' })).toBeVisible()
+})

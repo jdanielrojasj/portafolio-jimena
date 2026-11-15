@@ -20,6 +20,14 @@ export const videoCategory = defineType({
       options: {source: 'title.es', maxLength: 40},
       validation: (rule) => rule.required(),
     }),
+    defineField({
+      name: 'order',
+      title: 'Orden',
+      type: 'number',
+      description:
+        'Opcional. Orden de los filtros en la web: número más bajo, más a la izquierda. Sin número, van al final.',
+    }),
   ],
+  orderings: [{title: 'Orden manual', name: 'orderAsc', by: [{field: 'order', direction: 'asc'}]}],
   preview: {select: {title: 'title.es'}},
 })

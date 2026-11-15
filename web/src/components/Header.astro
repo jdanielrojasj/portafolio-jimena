@@ -70,7 +70,16 @@ const { locale, sections } = Astro.props
     // El selector de idioma conserva la sección en la que está la visita.
     document.querySelectorAll<HTMLAnchorElement>('[data-lang]').forEach((a) =>
       a.addEventListener('click', () => {
-        if (location.hash) a.hash = location.hash
+        if (location.hash) {
+          a.hash = location.hash
+          return
+        }
+        // Sin ancla en la dirección: la sección que ocupa ahora la pantalla.
+        const line = header.offsetHeight + window.innerHeight / 3
+        const current = [...document.querySelectorAll<HTMLElement>('main > section[id]')]
+          .filter((s) => s.getBoundingClientRect().top <= line)
+          .pop()
+        if (current && current.id !== 'portada') a.hash = current.id
       }),
     )
 

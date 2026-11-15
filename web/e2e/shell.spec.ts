@@ -68,3 +68,23 @@ test('el menú del móvil se abre y lleva a una sección', async ({ page, isMobi
   await expect(page).toHaveURL(/#contacto$/)
   await expect(toggle).toHaveAttribute('aria-expanded', 'false')
 })
+
+test('la imagen para compartir es una versión reducida, no el original', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /w=1200/)
+})
+
+test('el selector de idioma conserva la sección aunque se llegue a ella haciendo scroll', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('#servicios').evaluate((el) => el.scrollIntoView({ block: 'start', behavior: 'instant' }))
+  await page.waitForTimeout(300)
+  expect(page.url()).not.toContain('#')
+  await page.getByRole('link', { name: 'EN', exact: true }).click()
+  await expect(page).toHaveURL(/\/en\/#servicios$/)
+})
+
+test('desde la portada el selector de idioma no añade ninguna sección', async ({ page }) => {
+  await page.goto('/')
+  await page.getByRole('link', { name: 'EN', exact: true }).click()
+  await expect(page).toHaveURL(/\/en\/$/)
+})

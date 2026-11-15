@@ -14,6 +14,21 @@ if (!reduced) {
     void heroVideo.play().catch(() => {})
   }
 
+  // ---------- Botón para pausar lo que se mueve solo ----------
+  const motionToggle = document.querySelector<HTMLButtonElement>('[data-motion-toggle]')
+  if (motionToggle) {
+    motionToggle.hidden = false
+    motionToggle.addEventListener('click', () => {
+      const paused = motionToggle.getAttribute('aria-pressed') !== 'true'
+      motionToggle.setAttribute('aria-pressed', String(paused))
+      if (paused) document.documentElement.dataset.motion = 'paused'
+      else delete document.documentElement.dataset.motion
+      if (!heroVideo) return
+      if (paused) heroVideo.pause()
+      else void heroVideo.play().catch(() => {})
+    })
+  }
+
   // ---------- Entrada de la portada ----------
   const nameLines = gsap.utils.toArray<HTMLElement>('[data-hero-name] .line > span')
   const intro = document.querySelector<HTMLElement>('[data-hero-intro]')

@@ -110,3 +110,21 @@ test('la consulta trae ajustes, servicios y trabajos, y nunca el borrador', asyn
   expect(data.services).toEqual([{ name: 'UGC', description: '' }])
   expect(data.actingWorks[0]).toMatchObject({ title: 'Obra', role: 'Papel', year: 2024, kind: 'teatro' })
 })
+
+test('los tipos de vídeo salen en el orden que marca Jimena; sin número, al final', async () => {
+  const extra = [
+    { _id: 'cat-b', _type: 'videoCategory', title: { es: 'Beauty' }, slug: { current: 'beauty' }, order: 1 },
+    { _id: 'cat-p', _type: 'videoCategory', title: { es: 'Personal' }, slug: { current: 'personal' }, order: 2 },
+    { _id: 'cat-a', _type: 'videoCategory', title: { es: 'Animales' }, slug: { current: 'animales' } },
+  ]
+  const result = await evaluate(parse(SITE_QUERY), { dataset: [...dataset, ...extra] })
+  const raw = (await result.get()) as RawSite
+  expect(raw.categories!.map((c) => c.slug)).toEqual(['beauty', 'personal', 'animales', 'review'])
+})
+
+test('la consulta trae la foto para compartir', async () => {
+  const withShare = dataset.map((doc) => (doc._id === 'siteSettings' ? { ...doc, shareImage: image(escena) } : doc))
+  const result = await evaluate(parse(SITE_QUERY), { dataset: withShare })
+  const data = toSiteData((await result.get()) as RawSite, 'es')
+  expect(data.shareImage).toMatchObject({ url: escena.url, width: 1600, height: 1067 })
+})

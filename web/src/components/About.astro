@@ -27,7 +27,7 @@ const paragraphs = aboutText.split(/\n+/).map((p) => p.trim()).filter(Boolean)
         <p class="eyebrow">Jimena Melendez</p>
         <h2 class="display">{t(locale, 'section.about')}</h2>
       </div>
-      {paragraphs.map((p) => <p class="lead">{p}</p>)}
+      {paragraphs.map((p) => <p class="lead" lang={data.aboutLang}>{p}</p>)}
 
       {
         languages.length > 0 && (

@@ -67,6 +67,12 @@ const track = Array.from({ length: repeats }, () => words).flat()
     }
   }
 
+  /* Se detiene con el botón de pausa, y al pasar el ratón o el foco. */
+  :global(html[data-motion='paused']) .track,
+  .marquee:hover .track {
+    animation-play-state: paused;
+  }
+
   @keyframes marquee {
     to {
       transform: translateX(-50%);

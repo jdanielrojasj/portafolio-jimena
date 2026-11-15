@@ -9,6 +9,7 @@ export const SITE_QUERY = `{
     "heroVideoUrl": heroVideo.asset->url,
     aboutText,
     "aboutPhoto": aboutPhoto${img},
+    "shareImage": shareImage${img},
     languages,
     email,
     instagramUrl,
@@ -17,7 +18,7 @@ export const SITE_QUERY = `{
     showCasting,
     casting
   },
-  "categories": *[_type == "videoCategory"] | order(title.es asc){
+  "categories": *[_type == "videoCategory"] | order(coalesce(order, 9999) asc, title.es asc){
     "slug": slug.current,
     title
   },

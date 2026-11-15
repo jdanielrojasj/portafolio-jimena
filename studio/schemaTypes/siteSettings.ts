@@ -38,6 +38,15 @@ export const siteSettings = defineType({
         'Montaje corto y vertical (unos 10 segundos) que se repite sin sonido. Debe ser ligero: menos de 8 MB.',
     }),
     defineField({
+      name: 'shareImage',
+      title: 'Foto para compartir',
+      type: 'image',
+      group: 'hero',
+      options: {hotspot: true},
+      description:
+        'Opcional. Foto horizontal que se ve al compartir el enlace en WhatsApp, Instagram o LinkedIn. Si no pones ninguna, se usa la primera foto de portada.',
+    }),
+    defineField({
       name: 'marqueeWords',
       title: 'Palabras de la franja',
       type: 'array',

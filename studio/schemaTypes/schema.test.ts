@@ -32,3 +32,9 @@ test('todos los campos de todos los tipos tienen título', () => {
   for (const type of schemaTypes as any[])
     for (const field of type.fields ?? []) expect(field.title, `${type.name}.${field.name}`).toBeTruthy()
 })
+
+test('los tipos de vídeo tienen orden y los ajustes una foto para compartir', () => {
+  const field = (type: string, name: string) => (byName(type) as any).fields.find((f: any) => f.name === name)
+  expect(field('videoCategory', 'order')?.type).toBe('number')
+  expect(field('siteSettings', 'shareImage')?.type).toBe('image')
+})

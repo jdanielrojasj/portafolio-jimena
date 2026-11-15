@@ -48,7 +48,7 @@ const meta = [video.brand, categoryTitle].filter(Boolean).join(' · ')
     </span>
   </button>
   <div class="caption">
-    <h3 class="title">{video.title}</h3>
+    <h3 class="title" lang={video.titleLang}>{video.title}</h3>
     {meta && <p class="meta">{meta}</p>}
   </div>
 </li>

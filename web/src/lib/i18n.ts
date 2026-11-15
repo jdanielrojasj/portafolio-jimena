@@ -16,6 +16,16 @@ export function pick(value: Localized, locale: Locale): string {
   return value?.[DEFAULT_LOCALE]?.trim() ?? ''
 }
 
+/**
+ * Como pick(), pero indica si el texto cayó al español en otra versión,
+ * para marcarlo con lang="es" y que los lectores de pantalla lo lean bien.
+ */
+export function pickLang(value: Localized, locale: Locale): { text: string; lang: Locale | undefined } {
+  const text = pick(value, locale)
+  const own = value?.[locale]?.trim()
+  return { text, lang: text && !own && locale !== DEFAULT_LOCALE ? DEFAULT_LOCALE : undefined }
+}
+
 /** Ruta de la portada en un idioma, con ancla opcional a una sección. */
 export function localePath(locale: Locale, hash?: string): string {
   const base = locale === DEFAULT_LOCALE ? '/' : `/${locale}/`
@@ -57,6 +67,12 @@ const ui = {
   'video.play': { es: 'Reproducir', en: 'Play' },
   'video.close': { es: 'Cerrar', en: 'Close' },
   'lang.switch': { es: 'Cambiar idioma', en: 'Change language' },
+  'skip': { es: 'Saltar al contenido', en: 'Skip to content' },
+  'services.eyebrow': { es: 'Qué ofrezco', en: 'What I offer' },
+  'acting.eyebrow': { es: 'Teatro y cámara', en: 'Stage and screen' },
+  'contact.eyebrow': { es: 'Contacto', en: 'Contact' },
+  'hero.reel': { es: 'Montaje de vídeos de Jimena Melendez', en: 'Showreel of Jimena Melendez' },
+  'motion.pause': { es: 'Pausar movimiento', en: 'Pause motion' },
   'meta.role': { es: 'Actriz y creadora de contenido UGC', en: 'Actress & UGC creator' },
 } as const satisfies Record<string, Record<Locale, string>>
 

@@ -1,4 +1,4 @@
-import { pick, type Locale } from './i18n'
+import { pick, pickLang, type Locale } from './i18n'
 import type { ActingItem, Img, RawImg, RawSite, SiteData, VideoItem } from './types'
 
 const SITE_NAME = 'Jimena Melendez'
@@ -52,6 +52,7 @@ function byNumber(a: number | null | undefined, b: number | null | undefined): n
 export function toSiteData(raw: RawSite, locale: Locale): SiteData {
   const s = raw.settings ?? {}
   const tr = (v: Parameters<typeof pick>[0]) => pick(v, locale)
+  const trl = (v: Parameters<typeof pick>[0]) => pickLang(v, locale)
   const list = (v: Parameters<typeof pick>[0][] | null | undefined) =>
     (v ?? []).map(tr).filter(Boolean)
 
@@ -61,19 +62,21 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
     .map((v) => ({
       id: v._id,
       title: tr(v.title),
+      titleLang: trl(v.title).lang,
       category: v.category ?? '',
       brand: v.brand || undefined,
       videoUrl: v.videoUrl!,
       posterUrl: toImg(v.poster, '')?.url,
       posterPosition: toImg(v.poster, '')?.position,
       description: tr(v.description),
+      descriptionLang: trl(v.description).lang,
       featured: Boolean(v.featured),
     }))
 
   const used = new Set(videos.map((v) => v.category))
   const categories = (raw.categories ?? [])
     .filter((c) => c?.slug && used.has(c.slug))
-    .map((c) => ({ slug: c.slug!, title: tr(c.title) || c.slug! }))
+    .map((c) => ({ slug: c.slug!, title: tr(c.title) || c.slug!, lang: trl(c.title).lang }))
 
   const actingWorks: ActingItem[] = (raw.actingWorks ?? [])
     .filter((a) => Boolean(a?.title))
@@ -86,6 +89,7 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
       year: a.year ?? undefined,
       company: a.company ?? '',
       description: tr(a.description),
+      descriptionLang: trl(a.description).lang,
       photos: toImgs(a.photos, a.title!),
       videoUrl: a.videoUrl || undefined,
     }))
@@ -93,6 +97,7 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
   return {
     locale,
     tagline: tr(s.tagline),
+    taglineLang: trl(s.tagline).lang,
     marqueeWords: list(s.marqueeWords),
     heroPhotos: toImgs(s.heroPhotos, SITE_NAME),
     heroVideoUrl: s.heroVideoUrl || undefined,
@@ -105,7 +110,12 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
     services: (raw.services ?? [])
       .slice()
       .sort((a, b) => byNumber(a.order, b.order))
-      .map((x) => ({ name: tr(x.name), description: tr(x.description) }))
+      .map((x) => ({
+        name: tr(x.name),
+        nameLang: trl(x.name).lang,
+        description: tr(x.description),
+        descriptionLang: trl(x.description).lang,
+      }))
       .filter((x) => x.name),
     actingWorks,
     showCasting: Boolean(s.showCasting),
@@ -115,7 +125,9 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
       eyes: tr(s.casting?.eyes),
     },
     aboutText: tr(s.aboutText),
+    aboutLang: trl(s.aboutText).lang,
     aboutPhoto: toImg(s.aboutPhoto, SITE_NAME),
+    shareImage: toImg(s.shareImage, SITE_NAME) ?? toImgs(s.heroPhotos, SITE_NAME)[0],
     languages: list(s.languages),
     email: s.email?.trim() ?? '',
     instagramUrl: s.instagramUrl?.trim() ?? '',

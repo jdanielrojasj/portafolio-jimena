@@ -163,3 +163,29 @@ test('la portada de un vídeo también respeta recorte y punto de interés', () 
   expect(data.videos[0].posterUrl).toBe('https://x/p.jpg')
   expect(data.videos[0].posterPosition).toBe('50% 20%')
 })
+
+// ---------- Mejoras ----------
+
+test('en inglés los textos que caen al español quedan marcados como español', () => {
+  const v = d('en').videos.find((v) => v.id === 'sin-en')!
+  expect(v.titleLang).toBe('es')
+  expect(d('en').videos.find((v) => v.id === 'destacado')!.titleLang).toBeUndefined()
+  expect(d('es').videos.find((v) => v.id === 'sin-en')!.titleLang).toBeUndefined()
+  // La categoría "Unboxing" del contenido de prueba solo tiene español.
+  expect(d('en').categories.find((c) => c.slug === 'unboxing')!.lang).toBe('es')
+  // El primer servicio tiene descripción solo en español.
+  expect(d('en').services.find((s) => s.name === 'Sample service two')!.descriptionLang).toBe('es')
+})
+
+test('el texto "Sobre mí" sin inglés queda marcado como español', () => {
+  const data = toSiteData({ ...empty, settings: { email: 'a@b.c', aboutText: { es: 'Hola' }, tagline: { es: 'Actriz' } } }, 'en')
+  expect(data.aboutLang).toBe('es')
+  expect(data.taglineLang).toBe('es')
+})
+
+test('la foto para compartir usa la de "Ajustes" y, si no hay, la primera de portada', () => {
+  const share = { url: 'https://x/share.jpg', width: 1200, height: 630 }
+  expect(toSiteData({ ...empty, settings: { email: 'a@b.c', shareImage: share } }, 'es').shareImage?.url).toBe('https://x/share.jpg')
+  expect(d().shareImage?.url).toBe(d().heroPhotos[0].url)
+  expect(toSiteData(empty, 'es').shareImage).toBeUndefined()
+})

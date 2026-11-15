@@ -11,6 +11,7 @@ import Marquee from './Marquee.astro'
 import Services from './Services.astro'
 import VideoLightbox from './VideoLightbox.astro'
 import { t, type UiKey } from '../lib/i18n'
+import { sized } from '../lib/image'
 import type { SiteData } from '../lib/types'
 
 interface Props {
@@ -42,8 +43,8 @@ const sections = (
 ).filter((s) => s !== false)
 ---
 
-<Base locale={locale} title={`Jimena Melendez — ${role}`} description={role} ogImage={data.heroPhotos[0]?.url}>
-  <a class="skip-link" href="#contenido">{locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
+<Base locale={locale} title={`Jimena Melendez — ${role}`} description={role} ogImage={data.shareImage && sized(data.shareImage.url, 1200)}>
+  <a class="skip-link" href="#contenido">{t(locale, 'skip')}</a>
   <Header locale={locale} sections={sections} />
   <main id="contenido">
     <Hero data={data} />

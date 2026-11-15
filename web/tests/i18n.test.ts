@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DEFAULT_LOCALE, LOCALES, UI_KEYS, localePath, pick, t } from '../src/lib/i18n'
+import { DEFAULT_LOCALE, LOCALES, UI_KEYS, localePath, pick, pickLang, t } from '../src/lib/i18n'
 
 test('el idioma por defecto es el español', () => {
   expect(DEFAULT_LOCALE).toBe('es')
@@ -45,4 +45,11 @@ test('t tiene todas las claves en los dos idiomas', () => {
 test('el botón principal dice lo acordado', () => {
   expect(t('es', 'cta.work')).toBe('Trabajemos juntas')
   expect(t('en', 'cta.work')).toBe("Let's work together")
+})
+
+test('pickLang marca el texto que cae al español', () => {
+  expect(pickLang({ es: 'Hola' }, 'en')).toEqual({ text: 'Hola', lang: 'es' })
+  expect(pickLang({ es: 'Hola', en: 'Hi' }, 'en')).toEqual({ text: 'Hi', lang: undefined })
+  expect(pickLang({ es: 'Hola' }, 'es')).toEqual({ text: 'Hola', lang: undefined })
+  expect(pickLang(undefined, 'en')).toEqual({ text: '', lang: undefined })
 })

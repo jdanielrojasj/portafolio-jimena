@@ -13,8 +13,16 @@ if (dialog) {
     // Mientras el reproductor está abierto no suena ni se mueve nada más.
     const hero = document.querySelector<HTMLVideoElement>('[data-hero-video]')
     if (!hero) return
-    if (paused) hero.pause()
-    else if (!matchMedia('(prefers-reduced-motion: reduce)').matches) void hero.play().catch(() => {})
+    if (paused) {
+      hero.pause()
+      return
+    }
+    // Si la visita pausó el movimiento o lo pide reducido, sigue quieto.
+    const stopped =
+      document.documentElement.dataset.motion === 'paused' || matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (stopped) return
+    hero.dataset.resumed = 'true'
+    void hero.play().catch(() => {})
   }
 
   const open = (trigger: HTMLElement) => {

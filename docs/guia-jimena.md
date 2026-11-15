@@ -19,7 +19,7 @@ Esta guía es para ti, Jimena. Todo lo que se ve en tu web lo cambias desde un p
 | Trabajos como actriz | Obras de teatro, cortometrajes, talleres |
 | Servicios | La lista de lo que ofreces |
 | Marcas | Las marcas con las que has trabajado |
-| Tipos de vídeo | Las etiquetas de los filtros: Review, Unboxing, Personal… |
+| Tipos de vídeo | Las etiquetas de los filtros: Review, Unboxing, Personal… Con el campo **Orden** decides en qué orden salen |
 | Ajustes de la web | Portada, texto "Sobre mí", contacto y secciones opcionales |
 
 ## Antes de subir un vídeo: comprímelo
@@ -72,7 +72,12 @@ Los trabajos se ordenan solos, del más reciente al más antiguo.
 Entra en **Ajustes de la web**, pestaña **Portada**.
 
 - **Fotos de portada**: hasta dos fotos verticales. Quedan a los lados del vídeo, así que conviene que sean de la misma sesión.
-- **Vídeo de portada**: un montaje corto, de unos 10 segundos, que se repite sin sonido. Debe pesar poco (menos de 8 MB).
+- **Vídeo de portada**: un montaje corto, de unos 10 segundos, que se repite sin sonido. Debe pesar poco (menos de 8 MB). Para prepararlo, añade `-Portada` al comprimir; le quita el sonido y lo deja más ligero:
+
+  ```
+  scripts\comprimir-video.cmd material\montaje.mp4 -Portada
+  ```
+- **Foto para compartir**: opcional, una foto horizontal. Es la que se ve al mandar el enlace por WhatsApp o publicarlo en redes.
 - **Línea de presentación**: la frase bajo tu nombre.
 - **Palabras de la franja**: las palabras que corren en la banda oscura.
 

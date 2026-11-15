@@ -19,7 +19,7 @@ Quien visita la web no consulta Sanity salvo para descargar fotos y v√≠deos, as√
 
 ## Trabajar en local
 
-Requiere Node 22 o superior.
+Requiere Node 22.23.4 o superior (en Cloudflare se usa Node 24).
 
 ```
 npm install

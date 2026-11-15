@@ -1,9 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
+import { resolveSite } from './site-url.mjs'
 
-// Dirección pública de la web. En Cloudflare Pages se define SITE_URL
-// (o se usa la que Cloudflare da a cada publicación).
-const site = process.env.SITE_URL || process.env.CF_PAGES_URL || undefined
+const site = resolveSite(process.env)
 
 export default defineConfig({
   site,

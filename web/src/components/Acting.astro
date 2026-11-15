@@ -20,7 +20,7 @@ const kindLabel = (kind: string) => {
 <section id="actriz" class="section acting on-dark" data-reveal data-dark>
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow">{locale === 'es' ? 'Teatro y cámara' : 'Stage and screen'}</p>
+      <p class="eyebrow">{t(locale, 'acting.eyebrow')}</p>
       <h2 class="display">{t(locale, 'section.acting')}</h2>
     </div>
 
@@ -37,7 +37,11 @@ const kindLabel = (kind: string) => {
               {(work.role || work.company) && (
                 <p class="credit">{[work.role, work.company].filter(Boolean).join(' · ')}</p>
               )}
-              {work.description && <p class="description">{work.description}</p>}
+              {work.description && (
+                <p class="description" lang={work.descriptionLang}>
+                  {work.description}
+                </p>
+              )}
 
               {(work.photos.length > 0 || work.videoUrl) && (
                 <div class="media">
