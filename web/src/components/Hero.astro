@@ -41,7 +41,6 @@ const tagline = data.tagline || t(locale, 'meta.role')
             <figure class="piece piece--main" data-hero-piece data-speed="0.06">
               <video
                 src={heroVideoUrl}
-                autoplay
                 muted
                 loop
                 playsinline
@@ -83,8 +82,8 @@ const tagline = data.tagline || t(locale, 'meta.role')
   .name .line {
     display: block;
     overflow: hidden;
-    padding-bottom: 0.14em;
-    margin-bottom: -0.14em;
+    padding: 0 0.08em 0.14em;
+    margin: 0 -0.08em -0.14em;
   }
 
   .name .line > span {

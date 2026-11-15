@@ -222,9 +222,44 @@ const { locale, sections } = Astro.props
     border-bottom: 0;
   }
 
-  /* Sin JavaScript no hay botón que abra el panel: el menú se muestra en la barra. */
+  /* Sin JavaScript no hay botón que abra el panel: el menú queda a la vista bajo la barra. */
   :global(.no-js) .menu-toggle {
     display: none;
+  }
+
+  :global(.no-js) .site-header {
+    position: static;
+    height: auto;
+  }
+
+  :global(.no-js) .bar {
+    flex-wrap: wrap;
+    padding-block: 0.5rem;
+  }
+
+  :global(.no-js) .nav {
+    position: static;
+    order: 3;
+    flex-basis: 100%;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  :global(.no-js) .nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.25rem;
+  }
+
+  :global(.no-js) .nav a {
+    padding: 0.6rem 0;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    border: 0;
   }
 
   @media (min-width: 56rem) {
