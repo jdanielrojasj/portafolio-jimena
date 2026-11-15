@@ -82,17 +82,29 @@ foreach ($video in $videos) {
     continue
   }
 
+  # Se comprime a un archivo provisional y solo se renombra al terminar: si el
+  # equipo se apaga o se cierra la ventana a medias, no queda un vídeo roto con
+  # el nombre definitivo (que la siguiente vez se daría por hecho y se omitiría).
+  $provisional = Join-Path $Salida ($video.BaseName + $Sufijo + '.parcial.mp4')
+  if (Test-Path -LiteralPath $provisional) {
+    Remove-Item -LiteralPath $provisional -Force
+  }
+
   Write-Host "Comprimiendo $($video.Name)..."
   # -n: ffmpeg nunca sobrescribe un archivo existente. -stats muestra el progreso.
   & ffmpeg -hide_banner -loglevel error -stats -n -i $video.FullName `
     -vf $filtro -c:v libx264 -preset slow -crf $Calidad -pix_fmt yuv420p `
-    @Audio -movflags +faststart $destino
+    @Audio -movflags +faststart $provisional
 
-  if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $destino)) {
+  if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $provisional)) {
+    if (Test-Path -LiteralPath $provisional) {
+      Remove-Item -LiteralPath $provisional -Force
+    }
     Write-Host "  No se pudo comprimir $($video.Name)." -ForegroundColor Red
     $fallidos++
     continue
   }
+  Move-Item -LiteralPath $provisional -Destination $destino
 
   $mb = [math]::Round((Get-Item -LiteralPath $destino).Length / 1MB, 1)
   if ($mb -ge $LimiteMB) {
