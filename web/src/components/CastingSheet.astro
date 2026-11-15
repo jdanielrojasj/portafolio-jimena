@@ -1,0 +1,56 @@
+---
+import { t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale, casting } = data
+const rows = [
+  { label: t(locale, 'casting.height'), value: casting.height },
+  { label: t(locale, 'casting.hair'), value: casting.hair },
+  { label: t(locale, 'casting.eyes'), value: casting.eyes },
+].filter((row) => row.value)
+---
+
+<div class="casting" data-casting>
+  <h3 class="eyebrow">{t(locale, 'casting.title')}</h3>
+  <dl>
+    {
+      rows.map((row) => (
+        <div class="row">
+          <dt>{row.label}</dt>
+          <dd>{row.value}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</div>
+
+<style>
+  .casting {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+    gap: 1.25rem 2rem;
+    margin: 1rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line-dark);
+  }
+
+  dt {
+    font-size: var(--text-sm);
+    color: var(--on-dark-soft);
+  }
+
+  dd {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: 1.15;
+  }
+</style>

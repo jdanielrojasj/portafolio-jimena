@@ -1,0 +1,103 @@
+---
+import Photo from './Photo.astro'
+import { t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale, aboutText, aboutPhoto, languages } = data
+// Cada salto de línea del panel es un párrafo.
+const paragraphs = aboutText.split(/\n+/).map((p) => p.trim()).filter(Boolean)
+---
+
+<section id="sobre-mi" class="section" data-reveal>
+  <div class:list={['wrap', 'layout', { 'has-photo': aboutPhoto }]}>
+    {
+      aboutPhoto && (
+        <figure class="portrait">
+          <Photo img={aboutPhoto} sizes="(min-width: 56rem) 28rem, 90vw" />
+        </figure>
+      )
+    }
+    <div class="text">
+      <div class="section-head">
+        <p class="eyebrow">Jimena Melendez</p>
+        <h2 class="display">{t(locale, 'section.about')}</h2>
+      </div>
+      {paragraphs.map((p) => <p class="lead">{p}</p>)}
+
+      {
+        languages.length > 0 && (
+          <div class="languages">
+            <h3 class="eyebrow">{t(locale, 'about.languages')}</h3>
+            <ul data-languages>
+              {languages.map((language) => (
+                <li>{language}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .layout {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+  }
+
+  .portrait {
+    aspect-ratio: 4 / 5;
+    max-width: 28rem;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+  }
+
+  .portrait :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .lead {
+    max-width: 52ch;
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  .lead + .lead {
+    margin-top: 1em;
+  }
+
+  .languages {
+    margin-top: clamp(2rem, 4vw, 3rem);
+  }
+
+  .languages ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.9rem;
+  }
+
+  .languages li {
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  @media (min-width: 56rem) {
+    .has-photo {
+      grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr);
+      align-items: center;
+    }
+  }
+</style>

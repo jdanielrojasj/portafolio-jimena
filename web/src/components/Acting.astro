@@ -1,0 +1,190 @@
+---
+import CastingSheet from './CastingSheet.astro'
+import { sized } from '../lib/image'
+import { t, type UiKey } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale, actingWorks, casting } = data
+const showCasting = data.showCasting && Boolean(casting.height || casting.hair || casting.eyes)
+const kindLabel = (kind: string) => {
+  const key = `acting.kind.${kind}` as UiKey
+  return ['teatro', 'cortometraje', 'taller', 'otro'].includes(kind) ? t(locale, key) : kind
+}
+---
+
+<section id="actriz" class="section acting on-dark" data-reveal data-dark>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">{locale === 'es' ? 'Teatro y cámara' : 'Stage and screen'}</p>
+      <h2 class="display">{t(locale, 'section.acting')}</h2>
+    </div>
+
+    <ol class="works">
+      {
+        actingWorks.map((work) => (
+          <li class="work" data-acting-work>
+            <p class="when">
+              {work.year && <span class="year">{work.year}</span>}
+              <span class="kind">{kindLabel(work.kind)}</span>
+            </p>
+            <div class="body">
+              <h3>{work.title}</h3>
+              {(work.role || work.company) && (
+                <p class="credit">{[work.role, work.company].filter(Boolean).join(' · ')}</p>
+              )}
+              {work.description && <p class="description">{work.description}</p>}
+
+              {(work.photos.length > 0 || work.videoUrl) && (
+                <div class="media">
+                  {work.photos.map((photo, i) => (
+                    <button
+                      class="thumb"
+                      type="button"
+                      data-lightbox-image={sized(photo.url, 1600)}
+                      data-lightbox-alt={photo.alt}
+                      data-lightbox-title={work.title}
+                      aria-label={`${t(locale, 'acting.photos')}: ${work.title} (${i + 1})`}
+                    >
+                      <img src={sized(photo.url, 320)} alt="" loading="lazy" decoding="async" />
+                    </button>
+                  ))}
+                  {work.videoUrl && (
+                    <button
+                      class="watch"
+                      type="button"
+                      data-lightbox-video={work.videoUrl}
+                      data-lightbox-title={work.title}
+                    >
+                      <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                        <path d="M8 5.5v13l11-6.5z" fill="currentColor" />
+                      </svg>
+                      {t(locale, 'acting.video')}
+                      <span class="visually-hidden">: {work.title}</span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    {showCasting && <CastingSheet data={data} />}
+  </div>
+</section>
+
+<style>
+  .acting {
+    background: var(--dark);
+    color: var(--on-dark);
+  }
+
+  .works {
+    border-top: 1px solid var(--on-dark);
+  }
+
+  .work {
+    display: grid;
+    gap: 0.5rem 2rem;
+    padding-block: clamp(1.5rem, 3.5vw, 2.5rem);
+    border-bottom: 1px solid var(--line-dark);
+  }
+
+  .when {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--on-dark-soft);
+  }
+
+  .year {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent-on-dark);
+    font-weight: 600;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--text-xl);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+  }
+
+  .credit {
+    margin-top: 0.4rem;
+    color: var(--on-dark-soft);
+  }
+
+  .description {
+    margin-top: 0.75rem;
+    max-width: 56ch;
+  }
+
+  .media {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.1rem;
+  }
+
+  .thumb {
+    width: 5.5rem;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--dark-2);
+  }
+
+  .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease);
+  }
+
+  .thumb:hover img {
+    transform: scale(1.06);
+  }
+
+  .watch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.1rem;
+    border: 1px solid var(--on-dark);
+    border-radius: 999px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transition:
+      background-color 0.2s var(--ease),
+      color 0.2s var(--ease);
+  }
+
+  .watch:hover {
+    background: var(--on-dark);
+    color: var(--dark);
+  }
+
+  @media (min-width: 56rem) {
+    .work {
+      grid-template-columns: 12rem minmax(0, 1fr);
+    }
+
+    .when {
+      flex-direction: column;
+      gap: 0.15rem;
+      padding-top: 0.5rem;
+    }
+  }
+</style>

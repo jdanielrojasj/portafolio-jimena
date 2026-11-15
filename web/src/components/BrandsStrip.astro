@@ -1,0 +1,60 @@
+---
+import { sized } from '../lib/image'
+import { t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+---
+
+<section id="marcas" class="brands" data-reveal>
+  <div class="wrap">
+    <h2 class="eyebrow">{t(data.locale, 'section.brands')}</h2>
+    <ul class="list">
+      {
+        data.brands.map((brand) => (
+          <li data-brand>
+            {brand.logoUrl ? (
+              <img src={sized(brand.logoUrl, 320)} alt={brand.name} loading="lazy" decoding="async" />
+            ) : (
+              <span>{brand.name}</span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .brands {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    border-block: 1px solid var(--line);
+  }
+
+  .list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem clamp(1.5rem, 5vw, 4rem);
+    margin-top: 1.5rem;
+  }
+
+  .list span {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+
+  .list img {
+    height: clamp(2rem, 5vw, 3rem);
+    width: auto;
+    max-width: 10rem;
+    object-fit: contain;
+  }
+</style>

@@ -1,9 +1,14 @@
 ---
 import Base from '../layouts/Base.astro'
+import About from './About.astro'
+import Acting from './Acting.astro'
+import BrandsStrip from './BrandsStrip.astro'
+import BrandWork from './BrandWork.astro'
+import Contact from './Contact.astro'
 import Header from './Header.astro'
 import Hero from './Hero.astro'
 import Marquee from './Marquee.astro'
-import BrandWork from './BrandWork.astro'
+import Services from './Services.astro'
 import VideoLightbox from './VideoLightbox.astro'
 import { t, type UiKey } from '../lib/i18n'
 import type { SiteData } from '../lib/types'
@@ -17,14 +22,21 @@ const { locale } = data
 
 const role = data.tagline || t(locale, 'meta.role')
 
-// Solo se enlazan en el menú las secciones que tienen contenido.
+// Una sección sin contenido no se pinta ni se enlaza en el menú.
 const has = {
   work: data.videos.length > 0,
+  brands: data.showBrands && data.brands.length > 0,
+  services: data.services.length > 0,
+  acting: data.actingWorks.length > 0,
+  about: Boolean(data.aboutText || data.aboutPhoto),
 }
 
 const sections = (
   [
     has.work && { id: 'trabajo', label: 'nav.work' },
+    has.services && { id: 'servicios', label: 'nav.services' },
+    has.acting && { id: 'actriz', label: 'nav.acting' },
+    has.about && { id: 'sobre-mi', label: 'nav.about' },
     { id: 'contacto', label: 'nav.contact' },
   ] as (false | { id: string; label: UiKey })[]
 ).filter((s) => s !== false)
@@ -37,6 +49,11 @@ const sections = (
     <Hero data={data} />
     <Marquee words={data.marqueeWords} />
     {has.work && <BrandWork data={data} />}
+    {has.brands && <BrandsStrip data={data} />}
+    {has.services && <Services data={data} />}
+    {has.acting && <Acting data={data} />}
+    {has.about && <About data={data} />}
+    <Contact data={data} />
   </main>
   <VideoLightbox locale={locale} />
 </Base>

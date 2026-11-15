@@ -1,0 +1,112 @@
+---
+import { t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale, email, instagramUrl, tiktokUrl } = data
+const year = new Date().getFullYear()
+---
+
+<section id="contacto" class="section contact" data-reveal>
+  <div class="wrap">
+    <p class="eyebrow">{locale === 'es' ? 'Contacto' : 'Contact'}</p>
+    <h2 class="headline">{t(locale, 'section.contact')}</h2>
+
+    {
+      (email || instagramUrl) && (
+        <div class="actions">
+          {email && (
+            <a class="button" href={`mailto:${email}`}>
+              {t(locale, 'contact.email')}
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+          )}
+          {instagramUrl && (
+            <a class="button button--ghost" href={instagramUrl} target="_blank" rel="noopener noreferrer">
+              {t(locale, 'contact.instagram')}
+              <span class="arrow" aria-hidden="true">↗</span>
+            </a>
+          )}
+        </div>
+      )
+    }
+
+    <div class="details">
+      {email && <p class="email">{email}</p>}
+      {
+        tiktokUrl && (
+          <a class="secondary" href={tiktokUrl} target="_blank" rel="noopener noreferrer">
+            {t(locale, 'contact.tiktok')} <span aria-hidden="true">↗</span>
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>© {year} Jimena Melendez</p>
+  </div>
+</footer>
+
+<style>
+  .contact {
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+  }
+
+  .headline {
+    margin-top: 0.75rem;
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3rem, 1rem + 11vw, 9.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: clamp(2rem, 5vw, 3.5rem);
+  }
+
+  .actions .button {
+    flex: 1 1 16rem;
+    max-width: 24rem;
+  }
+
+  .details {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .email {
+    font-size: var(--text-lg);
+    overflow-wrap: anywhere;
+    user-select: all;
+  }
+
+  .secondary {
+    display: inline-block;
+    padding-block: 0.6rem;
+    font-weight: 500;
+  }
+
+  .footer {
+    padding-block: 1.5rem 2rem;
+    border-top: 1px solid var(--line);
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+  }
+</style>

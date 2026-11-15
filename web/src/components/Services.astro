@@ -1,0 +1,88 @@
+---
+import { t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const number = (i: number) => String(i + 1).padStart(2, '0')
+---
+
+<section id="servicios" class="section" data-reveal>
+  <div class="wrap layout">
+    <div class="section-head">
+      <p class="eyebrow">{data.locale === 'es' ? 'Qué ofrezco' : 'What I offer'}</p>
+      <h2 class="display">{t(data.locale, 'section.services')}</h2>
+    </div>
+
+    <ol class="list">
+      {
+        data.services.map((service, i) => (
+          <li class="service" data-service>
+            <span class="number" aria-hidden="true">
+              {number(i)}
+            </span>
+            <div>
+              <h3>{service.name}</h3>
+              {service.description && <p>{service.description}</p>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .list {
+    border-top: 1px solid var(--ink);
+  }
+
+  .service {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 0.5rem 1rem;
+    align-items: baseline;
+    padding-block: clamp(1.1rem, 2.5vw, 1.75rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .number {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--text-xl);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+  }
+
+  p {
+    margin-top: 0.4rem;
+    max-width: 48ch;
+    color: var(--ink-soft);
+  }
+
+  @media (min-width: 56rem) {
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .layout .section-head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

@@ -3,6 +3,8 @@ import { defineConfig, devices } from '@playwright/test'
 // Cada variante de contenido de prueba se construye y se sirve en su puerto.
 const SITES = {
   base: { fixture: 'site.raw.json', port: 4331 },
+  togglesOn: { fixture: 'site.raw.toggles-on.json', port: 4332 },
+  empty: { fixture: 'site.raw.empty.json', port: 4333 },
 }
 
 const url = (site: keyof typeof SITES) => `http://127.0.0.1:${SITES[site].port}`
@@ -19,6 +21,8 @@ export default defineConfig({
   projects: [
     { name: 'movil', testIgnore: VARIANT_SPECS, use: { ...mobile, baseURL: url('base') } },
     { name: 'escritorio', testIgnore: VARIANT_SPECS, use: { ...desktop, baseURL: url('base') } },
+    { name: 'toggles-on', testMatch: /\.toggles-on\.spec\.ts$/, use: { ...mobile, baseURL: url('togglesOn') } },
+    { name: 'empty', testMatch: /\.empty\.spec\.ts$/, use: { ...mobile, baseURL: url('empty') } },
   ],
   webServer: Object.values(SITES).map(({ fixture, port }) => ({
     command: `node e2e/serve.mjs ${fixture} ${port}`,
