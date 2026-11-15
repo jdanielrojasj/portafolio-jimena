@@ -28,3 +28,6 @@ web/src/lib/fixtures/site.raw.local.json
 # Demostración local (antes solo en .git/info/exclude)
 web/public/demo/
 web/src/lib/fixtures/site.raw.demo.json
+
+# Diseño y plan internos del proyecto: se quedan en este equipo
+docs/superpowers/
