@@ -7,6 +7,8 @@ export interface Img {
   width: number
   height: number
   alt: string
+  /** `object-position` CSS del punto de interés marcado en el panel. */
+  position?: string
 }
 
 export interface VideoItem {
@@ -17,6 +19,7 @@ export interface VideoItem {
   brand?: string
   videoUrl: string
   posterUrl?: string
+  posterPosition?: string
   description: string
   featured: boolean
 }
@@ -66,6 +69,10 @@ export interface RawImg {
   url?: Maybe<string>
   width?: Maybe<number>
   height?: Maybe<number>
+  /** Recorte del panel, en fracciones de cada borde. */
+  crop?: Maybe<{ top?: number; bottom?: number; left?: number; right?: number }>
+  /** Punto de interés del panel, en fracciones de la imagen original. */
+  hotspot?: Maybe<{ x?: number; y?: number; width?: number; height?: number }>
 }
 
 export interface RawSettings {

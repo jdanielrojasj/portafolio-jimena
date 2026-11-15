@@ -94,6 +94,12 @@
         "es": "Tipo sin vídeos",
         "en": "Empty type"
       }
+    },
+    {
+      "slug": "categoria-larga",
+      "title": {
+        "es": "Categoríadenombreextremadamentelargosinespacios"
+      }
     }
   ],
   "videos": [
@@ -167,6 +173,22 @@
       },
       "description": null,
       "featured": false
+    },
+    {
+      "_id": "larga",
+      "title": {
+        "es": "Títuloconunapalabraextremadamentelargasinespacios"
+      },
+      "category": "categoria-larga",
+      "brand": "Marcaconnombreextremadamentelargosinespaciosniguiones",
+      "videoUrl": "https://cdn.sanity.io/files/fixture/production/larga.mp4",
+      "poster": {
+        "url": "https://cdn.sanity.io/images/fixture/production/larga-1080x1920.jpg",
+        "width": 1080,
+        "height": 1920
+      },
+      "featured": false,
+      "order": 7
     }
   ],
   "actingWorks": [
@@ -210,6 +232,10 @@
     {
       "name": "Otra marca de prueba",
       "logoUrl": "https://cdn.sanity.io/images/fixture/production/logo-otra-400x200.png"
+    },
+    {
+      "name": "Marcaconnombreextremadamentelargosinespaciosniguiones",
+      "logoUrl": null
     }
   ],
   "services": [
@@ -230,6 +256,12 @@
       },
       "description": null,
       "order": 1
+    },
+    {
+      "name": {
+        "es": "Serviciodenombreextremadamentelargosinespacios"
+      },
+      "order": 9
     }
   ]
 }

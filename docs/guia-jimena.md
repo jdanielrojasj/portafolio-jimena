@@ -31,18 +31,20 @@ Los vídeos del móvil pesan demasiado para la web. El panel no acepta archivos 
 3. Escribe esto, cambiando el nombre por el de tu vídeo, y pulsa Enter:
 
    ```
-   .\scripts\comprimir-video.ps1 material\marcas\nombre-del-video.mp4
+   scripts\comprimir-video.cmd material\marcas\nombre-del-video.mp4
    ```
 
    Para comprimir de golpe todos los vídeos de una carpeta:
 
    ```
-   .\scripts\comprimir-video.ps1 material\marcas
+   scripts\comprimir-video.cmd material\marcas
    ```
 
 4. El vídeo comprimido aparece en `material\web`. **Ese es el que subes al panel.** El original no se toca.
 
 Si aparece un aviso en rojo diciendo que supera 100 MB, el vídeo es demasiado largo: recórtalo y repite.
+
+La primera vez puede pedirte instalar **ffmpeg**, el programa que comprime. Copia la orden que te muestra, pulsa Enter, cierra la terminal y vuelve a abrirla.
 
 ## Añadir un vídeo
 

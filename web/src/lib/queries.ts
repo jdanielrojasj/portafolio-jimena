@@ -1,4 +1,4 @@
-const img = `{ "url": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height }`
+const img = `{ "url": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height, crop, hotspot }`
 
 /** Una sola consulta trae todo el contenido de la web. Su forma es `RawSite`. */
 export const SITE_QUERY = `{

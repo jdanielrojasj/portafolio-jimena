@@ -4,7 +4,7 @@ Web de portafolio bilingüe (español / inglés) para Jimena Melendez, actriz y 
 
 - `web/` — la web pública (Astro, estática).
 - `studio/` — el panel de contenidos (Sanity Studio).
-- `scripts/` — utilidades; `comprimir-video.ps1` prepara vídeos para la web.
+- `scripts/` — utilidades; `comprimir-video.cmd` (que lanza `comprimir-video.ps1`) prepara vídeos para la web.
 - `docs/` — diseño, plan de construcción y [guía de uso del panel](docs/guia-jimena.md).
 
 El material original (vídeos y fotos) vive en `material/`, que está fuera del repositorio.
@@ -55,11 +55,12 @@ Estos pasos crean cuentas o publican, así que los hace Daniel.
    git ls-files | Select-String -Pattern 'material/|\.env$|\.superpowers'
    ```
    No debe devolver nada. Después: `gh repo create portafolio-jimena --public --source . --push`.
-5. **Cloudflare Pages.** Crear un proyecto conectado al repositorio:
-   - Directorio raíz: `web`
-   - Comando de construcción: `npm run build`
-   - Directorio de salida: `dist`
-   - Variables de entorno: `SANITY_PROJECT_ID`, `SANITY_DATASET=production`, `SITE_URL` (la dirección pública, por ejemplo `https://jimenamelendez.pages.dev`) y `NODE_VERSION=22`.
+5. **Cloudflare Pages.** Crear un proyecto conectado al repositorio. Es un monorepo con un único `package-lock.json` en la raíz, así que se construye desde la raíz:
+   - Directorio raíz: *(vacío: la raíz del repositorio)*
+   - Comando de construcción: `npm run build -w web`
+   - Directorio de salida: `web/dist`
+   - Variables de entorno: `SANITY_PROJECT_ID`, `SANITY_DATASET=production`, `SITE_URL` (la dirección pública, por ejemplo `https://jimenamelendez.pages.dev`) y `NODE_VERSION=24`.
+   - Hacer primero una publicación de vista previa y comprobar que construye antes de compartir la dirección.
 6. **Publicar el panel.** En `studio/`: `npx sanity deploy`.
 7. **Publicación automática.** En Cloudflare Pages, crear un *deploy hook*. En sanity.io/manage → API → Webhooks, crear un webhook que llame a esa dirección con POST al crear, actualizar o borrar documentos del dataset `production`. La dirección del hook es secreta: no va al repositorio.
 8. **Invitar a Jimena** al proyecto de Sanity como administradora.

@@ -6,6 +6,15 @@ export const SETTINGS_ID = 'siteSettings'
 /** Tipos que no se pueden crear ni borrar desde el panel: solo existe una ficha. */
 export const SINGLETON_TYPES = new Set(['siteSettings'])
 
+/** Acciones que la ficha única no ofrece: dejarla sin publicar vaciaría la web. */
+const BLOCKED_SINGLETON_ACTIONS = new Set(['unpublish', 'duplicate', 'delete'])
+
+export function singletonActions<T extends {action?: string}>(actions: T[], schemaType: string): T[] {
+  return SINGLETON_TYPES.has(schemaType)
+    ? actions.filter(({action}) => !BLOCKED_SINGLETON_ACTIONS.has(action ?? ''))
+    : actions
+}
+
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Contenido')

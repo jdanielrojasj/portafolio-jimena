@@ -33,6 +33,7 @@ const meta = [video.brand, categoryTitle].filter(Boolean).join(' · ')
             srcset={`${sized(video.posterUrl, 360)} 360w, ${sized(video.posterUrl, 540)} 540w, ${sized(video.posterUrl, 810)} 810w`}
             sizes="(min-width: 60rem) 17rem, 62vw"
             alt=""
+            style={video.posterPosition ? `object-position: ${video.posterPosition}` : undefined}
             loading="lazy"
             decoding="async"
           />

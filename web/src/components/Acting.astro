@@ -50,7 +50,13 @@ const kindLabel = (kind: string) => {
                       data-lightbox-title={work.title}
                       aria-label={`${t(locale, 'acting.photos')}: ${work.title} (${i + 1})`}
                     >
-                      <img src={sized(photo.url, 320)} alt="" loading="lazy" decoding="async" />
+                      <img
+                        src={sized(photo.url, 320)}
+                        alt=""
+                        style={photo.position ? `object-position: ${photo.position}` : undefined}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     </button>
                   ))}
                   {work.videoUrl && (

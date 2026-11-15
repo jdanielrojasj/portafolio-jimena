@@ -1,5 +1,7 @@
 {
-  "settings": null,
+  "settings": {
+    "email": "prueba@example.com"
+  },
   "categories": [],
   "videos": [],
   "actingWorks": [],

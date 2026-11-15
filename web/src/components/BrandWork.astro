@@ -55,6 +55,9 @@ const titleOf = (slug: string) => categories.find((c) => c.slug === slug)?.title
   .filter {
     min-height: 2.75rem;
     padding: 0.5rem 1.1rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    text-align: center;
     border: 1px solid var(--ink);
     border-radius: 999px;
     font-size: var(--text-sm);

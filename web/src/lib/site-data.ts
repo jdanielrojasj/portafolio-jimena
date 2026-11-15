@@ -3,9 +3,40 @@ import type { ActingItem, Img, RawImg, RawSite, SiteData, VideoItem } from './ty
 
 const SITE_NAME = 'Jimena Melendez'
 
+const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
+const pct = (n: number) => `${Math.round(clamp01(n) * 1000) / 10}%`
+
+/**
+ * Aplica el recorte y el punto de interés que Jimena marca en el panel:
+ * el recorte se pide a Sanity (parámetro rect) y el punto de interés se
+ * traduce a object-position, para que object-fit: cover no corte caras.
+ */
 function toImg(raw: RawImg | null | undefined, alt: string): Img | undefined {
   if (!raw?.url) return undefined
-  return { url: raw.url, width: raw.width ?? 0, height: raw.height ?? 0, alt }
+  const W = raw.width ?? 0
+  const H = raw.height ?? 0
+  const c = { top: raw.crop?.top ?? 0, bottom: raw.crop?.bottom ?? 0, left: raw.crop?.left ?? 0, right: raw.crop?.right ?? 0 }
+  const keepW = 1 - c.left - c.right
+  const keepH = 1 - c.top - c.bottom
+  const cropped = W > 0 && H > 0 && keepW > 0 && keepH > 0 && (c.top || c.bottom || c.left || c.right)
+
+  let url = raw.url
+  let width = W
+  let height = H
+  if (cropped) {
+    const rect = [Math.round(c.left * W), Math.round(c.top * H), Math.round(keepW * W), Math.round(keepH * H)]
+    url = `${raw.url}${raw.url.includes('?') ? '&' : '?'}rect=${rect.join(',')}`
+    width = rect[2]
+    height = rect[3]
+  }
+
+  const h = raw.hotspot
+  const position =
+    h && typeof h.x === 'number' && typeof h.y === 'number' && keepW > 0 && keepH > 0
+      ? `${pct((h.x - c.left) / keepW)} ${pct((h.y - c.top) / keepH)}`
+      : undefined
+
+  return { url, width, height, alt, position }
 }
 
 function toImgs(raw: (RawImg | null | undefined)[] | null | undefined, alt: string): Img[] {
@@ -33,7 +64,8 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
       category: v.category ?? '',
       brand: v.brand || undefined,
       videoUrl: v.videoUrl!,
-      posterUrl: v.poster?.url || undefined,
+      posterUrl: toImg(v.poster, '')?.url,
+      posterPosition: toImg(v.poster, '')?.position,
       description: tr(v.description),
       featured: Boolean(v.featured),
     }))
@@ -121,6 +153,11 @@ export async function getSiteData(
   try {
     raw = await source()
     if (!raw || typeof raw !== 'object') throw new Error('respuesta vacía')
+    // Una respuesta válida pero sin ajustes publicados (por ejemplo, si se
+    // despublica la ficha o el dataset no es público) dejaría una web vacía.
+    if (!raw.settings) throw new Error('no hay "Ajustes de la web" publicados')
+    if (!raw.settings.email?.trim() && !raw.settings.instagramUrl?.trim())
+      throw new Error('"Ajustes de la web" no tiene ni correo ni Instagram de contacto')
   } catch (cause) {
     const reason = cause instanceof Error ? cause.message : String(cause)
     throw new Error(`No se pudo leer el contenido de Sanity: ${reason}`, { cause })

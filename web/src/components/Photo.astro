@@ -23,6 +23,7 @@ const widths = [320, 480, 640, 960, 1280, 1920]
   width={img.width || undefined}
   height={img.height || undefined}
   alt={img.alt}
+  style={img.position ? `object-position: ${img.position}` : undefined}
   loading={eager ? 'eager' : 'lazy'}
   decoding="async"
   fetchpriority={eager ? 'high' : undefined}

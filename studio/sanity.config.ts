@@ -3,7 +3,7 @@ import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 
 import {schemaTypes} from './schemaTypes'
-import {SINGLETON_TYPES, structure} from './structure'
+import {SINGLETON_TYPES, singletonActions, structure} from './structure'
 
 // El identificador del proyecto no es secreto, pero se lee del entorno para
 // que el repositorio funcione con cualquier proyecto de Sanity.
@@ -22,10 +22,7 @@ export default defineConfig({
     templates: (templates) => templates.filter(({schemaType}) => !SINGLETON_TYPES.has(schemaType)),
   },
   document: {
-    // La ficha única no se puede duplicar ni borrar.
-    actions: (actions, {schemaType}) =>
-      SINGLETON_TYPES.has(schemaType)
-        ? actions.filter(({action}) => action !== 'duplicate' && action !== 'delete')
-        : actions,
+    // La ficha única no se puede despublicar, duplicar ni borrar.
+    actions: (actions, {schemaType}) => singletonActions(actions, schemaType),
   },
 })

@@ -4,7 +4,7 @@ test('con el interruptor encendido aparece la franja de marcas entre vídeos y s
   await page.goto('/')
   const brands = page.locator('#marcas')
   await expect(brands).toBeVisible()
-  await expect(brands.locator('[data-brand]')).toHaveCount(2)
+  await expect(brands.locator('[data-brand]')).toHaveCount(3)
   await expect(brands).toContainText('Marca de prueba')
   // La marca con logo muestra la imagen con su nombre como texto alternativo.
   await expect(brands.locator('img')).toHaveAttribute('alt', 'Otra marca de prueba')
@@ -29,4 +29,32 @@ test('con el interruptor encendido aparece la ficha de casting, traducida', asyn
   await page.goto('/en/')
   await expect(page.locator('#actriz [data-casting]')).toContainText('Height')
   await expect(page.locator('#actriz [data-casting]')).toContainText('Brown')
+})
+
+test('a 320 px ninguna palabra larga se sale de la pantalla', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 })
+  await page.goto('/')
+  // body tiene overflow-x: clip, así que no basta con mirar el scroll:
+  // se comprueba que cada texto termina dentro de la pantalla.
+  const selectors = [
+    'h1',
+    'h2',
+    '#trabajo [data-filter]',
+    '#marcas [data-brand]',
+    '#servicios h3',
+    '#actriz h3',
+    '#contacto .headline',
+    '#contacto .email',
+  ]
+  for (const selector of selectors) {
+    const outside = await page.locator(selector).evaluateAll((els) =>
+      els.filter((el) => el.getBoundingClientRect().right > 320.5).map((el) => el.textContent?.trim()),
+    )
+    expect(outside, selector).toEqual([])
+  }
+  // Las tarjetas del carrusel se deslizan, pero su texto no debe salirse de la tarjeta.
+  const cards = await page.locator('[data-video-item]').evaluateAll((els) =>
+    els.filter((el) => el.scrollWidth > el.clientWidth).map((el) => el.querySelector('h3')?.textContent),
+  )
+  expect(cards).toEqual([])
 })
