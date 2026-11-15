@@ -1,0 +1,75 @@
+---
+interface Props {
+  words: string[]
+}
+
+const { words } = Astro.props
+// La lista se repite para que la franja nunca muestre un hueco al girar.
+const repeats = Math.max(2, Math.ceil(12 / Math.max(words.length, 1)))
+const track = Array.from({ length: repeats }, () => words).flat()
+---
+
+{
+  words.length > 0 && (
+    <div class="marquee" aria-hidden="true" data-marquee>
+      <div class="track">
+        {[0, 1].map(() => (
+          <ul>
+            {track.map((word) => (
+              <li>{word}</li>
+            ))}
+          </ul>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .marquee {
+    overflow: hidden;
+    background: var(--dark);
+    color: var(--on-dark);
+    padding-block: clamp(0.9rem, 2vw, 1.4rem);
+  }
+
+  .track {
+    display: flex;
+    width: max-content;
+  }
+
+  ul {
+    display: flex;
+    flex: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 1rem + 2.4vw, 2.75rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  li::after {
+    content: '/';
+    margin-inline: clamp(1rem, 2.5vw, 2rem);
+    color: var(--accent-on-dark);
+    font-style: italic;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .track {
+      animation: marquee 40s linear infinite;
+    }
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+</style>

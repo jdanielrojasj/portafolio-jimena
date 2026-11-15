@@ -1,0 +1,29 @@
+---
+import { sized, srcset } from '../lib/image'
+import type { Img } from '../lib/types'
+
+interface Props {
+  img: Img
+  /** Atributo `sizes`: ancho que ocupa la foto según la pantalla. */
+  sizes: string
+  /** Las fotos de la portada se cargan de inmediato; el resto, al acercarse. */
+  eager?: boolean
+  class?: string
+}
+
+const { img, sizes, eager = false, class: className } = Astro.props
+const widths = [320, 480, 640, 960, 1280, 1920]
+---
+
+<img
+  class={className}
+  src={sized(img.url, 960)}
+  srcset={srcset(img.url, widths, img.width)}
+  sizes={sizes}
+  width={img.width || undefined}
+  height={img.height || undefined}
+  alt={img.alt}
+  loading={eager ? 'eager' : 'lazy'}
+  decoding="async"
+  fetchpriority={eager ? 'high' : undefined}
+/>

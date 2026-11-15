@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro'
 import Header from './Header.astro'
+import Hero from './Hero.astro'
+import Marquee from './Marquee.astro'
 import { t, type UiKey } from '../lib/i18n'
 import type { SiteData } from '../lib/types'
 
@@ -22,5 +24,8 @@ const sections: { id: string; label: UiKey }[] = [
 <Base locale={locale} title={`Jimena Melendez — ${role}`} description={role} ogImage={data.heroPhotos[0]?.url}>
   <a class="skip-link" href="#contenido">{locale === 'es' ? 'Saltar al contenido' : 'Skip to content'}</a>
   <Header locale={locale} sections={sections} />
-  <main id="contenido"></main>
+  <main id="contenido">
+    <Hero data={data} />
+    <Marquee words={data.marqueeWords} />
+  </main>
 </Base>

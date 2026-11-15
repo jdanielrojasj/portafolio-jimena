@@ -1,0 +1,163 @@
+---
+import Photo from './Photo.astro'
+import { t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale, heroPhotos, heroVideoUrl } = data
+const [left, right] = heroPhotos
+const pieces = [left, heroVideoUrl ? 'video' : undefined, right].filter(Boolean).length
+const tagline = data.tagline || t(locale, 'meta.role')
+---
+
+<section id="portada" class="hero" data-hero>
+  <div class="wrap">
+    <h1 class="name" data-hero-name>
+      <span class="line"><span>Jimena</span></span>
+      <span class="line"><span>Melendez</span></span>
+    </h1>
+
+    <div class="intro" data-hero-intro>
+      <p class="tagline">{tagline}</p>
+      <a class="button" href="#contacto">
+        {t(locale, 'cta.work')}
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    {
+      pieces > 0 && (
+        <div class="trio" data-pieces={pieces}>
+          {left && (
+            <figure class="piece piece--side" data-hero-piece data-speed="-0.12">
+              <Photo img={left} sizes="(min-width: 60rem) 22rem, 30vw" eager />
+            </figure>
+          )}
+          {heroVideoUrl && (
+            <figure class="piece piece--main" data-hero-piece data-speed="0.06">
+              <video
+                src={heroVideoUrl}
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                disablepictureinpicture
+                aria-label={locale === 'es' ? 'Montaje de vídeos de Jimena Melendez' : 'Showreel of Jimena Melendez'}
+                data-hero-video
+              />
+            </figure>
+          )}
+          {right && (
+            <figure class="piece piece--side" data-hero-piece data-speed="-0.2">
+              <Photo img={right} sizes="(min-width: 60rem) 22rem, 30vw" eager />
+            </figure>
+          )}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-top: calc(var(--header-h) + clamp(1.25rem, 4vw, 3rem));
+    padding-bottom: clamp(3rem, 8vw, 7rem);
+  }
+
+  .name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--text-hero);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    font-variation-settings: 'opsz' 144;
+    margin-left: -0.04em;
+  }
+
+  /* Cada línea recorta su texto para que pueda entrar deslizándose. */
+  .name .line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+
+  .name .line > span {
+    display: block;
+  }
+
+  .name .line:last-child {
+    text-align: right;
+  }
+
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    margin-top: clamp(1.5rem, 4vw, 2.75rem);
+  }
+
+  .tagline {
+    max-width: 22ch;
+    font-size: var(--text-lg);
+    line-height: 1.3;
+    color: var(--ink-soft);
+    text-wrap: balance;
+  }
+
+  .trio {
+    display: grid;
+    grid-template-columns: 1fr 1.32fr 1fr;
+    align-items: center;
+    gap: clamp(0.5rem, 2vw, 1.5rem);
+    max-width: 66rem;
+    margin: clamp(2rem, 6vw, 4.5rem) auto 0;
+  }
+
+  .trio[data-pieces='2'] {
+    grid-template-columns: 1fr 1.32fr;
+    max-width: 44rem;
+  }
+
+  .trio[data-pieces='1'] {
+    grid-template-columns: minmax(0, 24rem);
+    justify-content: center;
+  }
+
+  .piece {
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    will-change: transform;
+  }
+
+  .piece--side {
+    aspect-ratio: 4 / 5;
+  }
+
+  .piece--main {
+    aspect-ratio: 9 / 16;
+    background: var(--dark);
+    box-shadow: 0 1.5rem 3.5rem -1.5rem rgb(27 26 24 / 0.45);
+  }
+
+  /* Sin vídeo, las fotos ocupan el protagonismo con el mismo alto. */
+  .trio:not(:has(.piece--main)) {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    max-width: 44rem;
+  }
+
+  .piece :global(img),
+  .piece video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>
