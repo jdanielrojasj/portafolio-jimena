@@ -12,6 +12,7 @@ test('con el interruptor encendido aparece la franja de marcas entre vídeos y s
     'portada',
     'trabajo',
     'marcas',
+    'opiniones',
     'servicios',
     'actriz',
     'sobre-mi',
@@ -53,8 +54,27 @@ test('a 320 px ninguna palabra larga se sale de la pantalla', async ({ page }) =
     expect(outside, selector).toEqual([])
   }
   // Las tarjetas del carrusel se deslizan, pero su texto no debe salirse de la tarjeta.
-  const cards = await page.locator('[data-video-item]').evaluateAll((els) =>
+  const cards = await page.locator('[data-video-item], [data-testimonial] figure').evaluateAll((els) =>
     els.filter((el) => el.scrollWidth > el.clientWidth).map((el) => el.querySelector('h3')?.textContent),
   )
   expect(cards).toEqual([])
+})
+
+test('varias opiniones van en orden, deslizables, cada una con su autoría', async ({ page }) => {
+  await page.goto('/')
+  const items = page.locator('#opiniones [data-testimonial]')
+  await expect(items).toHaveCount(3)
+  await expect(items.nth(0)).toContainText('Sample client review')
+  await expect(items.nth(1)).toContainText('Persona de prueba')
+  await expect(items.nth(1)).toContainText('Directora de prueba')
+  // Sin enlace ni fuente: no hay "Ver en…"; con LinkedIn sin valoración: sin estrellas.
+  await expect(items.nth(1).getByRole('link')).toHaveCount(0)
+  await expect(items.nth(2).getByRole('img')).toHaveCount(0)
+  await expect(items.nth(2).locator('blockquote')).toHaveAttribute('lang', 'pt')
+  // En español, la opinión escrita en español no lleva lang.
+  await expect(items.nth(1).locator('blockquote')).not.toHaveAttribute('lang', /.+/)
+  const scrollable = await page
+    .locator('#opiniones [data-testimonials]')
+    .evaluate((el) => getComputedStyle(el).overflowX)
+  expect(scrollable).toBe('auto')
 })

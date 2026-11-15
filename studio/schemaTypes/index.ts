@@ -4,6 +4,7 @@ import {localeString} from './localeString'
 import {localeText} from './localeText'
 import {service} from './service'
 import {siteSettings} from './siteSettings'
+import {testimonial} from './testimonial'
 import {videoCategory} from './videoCategory'
 import {videoPiece} from './videoPiece'
 
@@ -15,5 +16,6 @@ export const schemaTypes = [
   actingWork,
   brand,
   service,
+  testimonial,
   siteSettings,
 ]

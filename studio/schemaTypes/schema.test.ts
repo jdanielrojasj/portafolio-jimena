@@ -38,3 +38,13 @@ test('los tipos de vídeo tienen orden y los ajustes una foto para compartir', (
   expect(field('videoCategory', 'order')?.type).toBe('number')
   expect(field('siteSettings', 'shareImage')?.type).toBe('image')
 })
+
+test('existe el tipo opinión con el texto obligatorio y ayudas en español', () => {
+  const type = byName('testimonial') as any
+  expect(type).toBeDefined()
+  const field = (n: string) => type.fields.find((f: any) => f.name === n)
+  for (const n of ['quote', 'quoteLang', 'author', 'role', 'project', 'rating', 'source', 'sourceUrl', 'order'])
+    expect(field(n), n).toBeDefined()
+  for (const f of type.fields) expect(f.description, f.name).toBeTruthy()
+  expect(field('quoteLang').initialValue).toBe('en')
+})

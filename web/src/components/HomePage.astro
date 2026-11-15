@@ -9,6 +9,7 @@ import Header from './Header.astro'
 import Hero from './Hero.astro'
 import Marquee from './Marquee.astro'
 import Services from './Services.astro'
+import Testimonials from './Testimonials.astro'
 import VideoLightbox from './VideoLightbox.astro'
 import { t, type UiKey } from '../lib/i18n'
 import { sized } from '../lib/image'
@@ -27,6 +28,7 @@ const role = data.tagline || t(locale, 'meta.role')
 const has = {
   work: data.videos.length > 0,
   brands: data.showBrands && data.brands.length > 0,
+  testimonials: data.testimonials.length > 0,
   services: data.services.length > 0,
   acting: data.actingWorks.length > 0,
   about: Boolean(data.aboutText || data.aboutPhoto),
@@ -35,6 +37,7 @@ const has = {
 const sections = (
   [
     has.work && { id: 'trabajo', label: 'nav.work' },
+    has.testimonials && { id: 'opiniones', label: 'nav.testimonials' },
     has.services && { id: 'servicios', label: 'nav.services' },
     has.acting && { id: 'actriz', label: 'nav.acting' },
     has.about && { id: 'sobre-mi', label: 'nav.about' },
@@ -51,6 +54,7 @@ const sections = (
     <Marquee words={data.marqueeWords} />
     {has.work && <BrandWork data={data} />}
     {has.brands && <BrandsStrip data={data} />}
+    {has.testimonials && <Testimonials data={data} />}
     {has.services && <Services data={data} />}
     {has.acting && <Acting data={data} />}
     {has.about && <About data={data} />}

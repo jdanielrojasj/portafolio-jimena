@@ -48,6 +48,17 @@ export const SITE_QUERY = `{
     name,
     "logoUrl": logo.asset->url
   },
+  "testimonials": *[_type == "testimonial"] | order(coalesce(order, 9999) asc, _createdAt asc){
+    _id,
+    quote,
+    quoteLang,
+    author,
+    role,
+    project,
+    rating,
+    source,
+    sourceUrl
+  },
   "services": *[_type == "service"] | order(_createdAt asc){
     name,
     description,

@@ -112,5 +112,6 @@ test('en inglés, lo que solo está en español va marcado como español', async
 
 test('en español no se añade lang a los textos', async ({ page }) => {
   await page.goto('/')
-  await expect(page.locator('main [lang]')).toHaveCount(0)
+  // Las opiniones se citan en su idioma original y sí lo indican.
+  await expect(page.locator('main [lang]:not(blockquote)')).toHaveCount(0)
 })

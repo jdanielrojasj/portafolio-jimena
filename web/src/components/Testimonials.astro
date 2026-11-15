@@ -1,0 +1,204 @@
+---
+import { formatNumber, t } from '../lib/i18n'
+import type { SiteData } from '../lib/types'
+
+interface Props {
+  data: SiteData
+}
+
+const { data } = Astro.props
+const { locale, testimonials } = data
+const single = testimonials.length === 1
+
+const fill = (text: string, values: Record<string, string>) =>
+  text.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? '')
+
+// Sin nombre de autor: "Cliente en Upwork" o, si no hay fuente, "Cliente".
+const who = (author: string, sourceLabel: string) =>
+  author || (sourceLabel ? fill(t(locale, 'testimonials.clientOf'), { source: sourceLabel }) : t(locale, 'testimonials.client'))
+---
+
+<section id="opiniones" class="section testimonials" data-reveal>
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">{t(locale, 'testimonials.eyebrow')}</p>
+      <h2 class="display">{t(locale, 'section.testimonials')}</h2>
+    </div>
+  </div>
+
+  <ul class:list={['list', { single }]} data-testimonials>
+    {
+      testimonials.map((item) => (
+        <li class="item" data-testimonial>
+          <figure>
+            {item.rating !== undefined && (
+              <span
+                class="stars"
+                role="img"
+                aria-label={fill(t(locale, 'testimonials.rating'), { n: formatNumber(locale, item.rating) })}
+                style={`--fill: ${(item.rating / 5) * 100}%`}
+              >
+                <span aria-hidden="true">★★★★★</span>
+              </span>
+            )}
+            <blockquote lang={item.quoteLang !== locale ? item.quoteLang : undefined}>
+              <p>{item.quote}</p>
+            </blockquote>
+            <figcaption>
+              <span class="who">{who(item.author, item.sourceLabel)}</span>
+              {item.author && item.role && (
+                <span class="role" lang={item.roleLang}>
+                  {item.role}
+                </span>
+              )}
+              {item.project && (
+                <span class="project" lang={item.projectLang}>
+                  {item.project}
+                </span>
+              )}
+              {item.sourceUrl && (
+                <a class="source" href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  {item.sourceLabel
+                    ? fill(t(locale, 'testimonials.seeOn'), { source: item.sourceLabel })
+                    : t(locale, 'testimonials.see')}
+                  <span aria-hidden="true"> ↗</span>
+                </a>
+              )}
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .testimonials {
+    background: var(--paper-2);
+  }
+
+  /* Varias opiniones: carril deslizable, como el de los vídeos. */
+  .list {
+    --edge: max(var(--gutter), (100vw - var(--max)) / 2);
+    display: flex;
+    gap: clamp(0.75rem, 2vw, 1.5rem);
+    overflow-x: auto;
+    padding-inline: var(--edge);
+    scroll-padding-inline: var(--edge);
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+
+  .list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .item {
+    flex: none;
+    width: min(84vw, 26rem);
+    min-width: 0;
+    scroll-snap-align: start;
+  }
+
+  figure {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    height: 100%;
+    margin: 0;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border-radius: var(--radius);
+    background: var(--paper);
+  }
+
+  blockquote {
+    margin: 0;
+    flex: 1;
+  }
+
+  blockquote p {
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+  }
+
+  blockquote p::before {
+    content: '“';
+  }
+
+  blockquote p::after {
+    content: '”';
+  }
+
+  .stars {
+    position: relative;
+    display: inline-block;
+    width: max-content;
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: var(--line);
+  }
+
+  .stars::after {
+    content: '★★★★★';
+    position: absolute;
+    inset: 0;
+    width: var(--fill);
+    overflow: hidden;
+    color: var(--accent);
+  }
+
+  figcaption {
+    display: grid;
+    gap: 0.2rem;
+    font-size: var(--text-sm);
+    color: var(--ink-soft);
+  }
+
+  .who {
+    font-weight: 600;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+
+  .source {
+    margin-top: 0.4rem;
+    justify-self: start;
+    padding-block: 0.4rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* Una sola opinión: cita grande y centrada, sin tarjeta. */
+  .list.single {
+    display: block;
+    overflow: visible;
+  }
+
+  .single .item {
+    width: auto;
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .single figure {
+    align-items: center;
+    text-align: center;
+    background: none;
+    padding-inline: 0;
+  }
+
+  .single blockquote p {
+    font-size: var(--text-xl);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  .single .source {
+    justify-self: center;
+  }
+</style>

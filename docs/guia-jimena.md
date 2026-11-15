@@ -16,6 +16,7 @@ Esta guía es para ti, Jimena. Todo lo que se ve en tu web lo cambias desde un p
 | Apartado | Para qué sirve |
 |---|---|
 | Vídeos | Tus vídeos para marcas y los personales |
+| Opiniones | Lo que dicen de ti tus clientes (por ejemplo, reseñas de Upwork) |
 | Trabajos como actriz | Obras de teatro, cortometrajes, talleres |
 | Servicios | La lista de lo que ofreces |
 | Marcas | Las marcas con las que has trabajado |
@@ -57,6 +58,17 @@ La primera vez puede pedirte instalar **ffmpeg**, el programa que comprime. Copi
    - **Imagen de portada**: opcional. Es lo que se ve antes de darle a reproducir. Si no pones ninguna, se usa el primer instante del vídeo.
    - **Destacado**: actívalo para que salga de los primeros.
 3. Pulsa **Publicar**.
+
+## Añadir una opinión de un cliente
+
+Las opiniones salen en la sección "Lo que dicen quienes han trabajado conmigo", justo después de los vídeos. Mientras no haya ninguna, la sección no aparece.
+
+1. Entra en **Opiniones** y crea una nueva.
+2. **Texto de la opinión**: cópialo exacto, tal como lo escribió la persona. No lo traduzcas ni lo cambies.
+3. **Idioma del texto**: en el que está escrita (en Upwork casi siempre inglés).
+4. **Quién la escribió**: el nombre, si lo sabes. Si lo dejas vacío se verá "Cliente en Upwork".
+5. Opcional: el cargo o empresa, el trabajo que hicisteis, las estrellas (por ejemplo 4,8) y el enlace a tu perfil de Upwork.
+6. Pulsa **Publicar**.
 
 ## Añadir un trabajo como actriz
 

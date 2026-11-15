@@ -1,26 +1,61 @@
 {
   "settings": {
-    "tagline": { "es": "Actriz y creadora de contenido UGC", "en": "Actress & UGC creator" },
+    "tagline": {
+      "es": "Actriz y creadora de contenido UGC",
+      "en": "Actress & UGC creator"
+    },
     "marqueeWords": [
-      { "es": "UGC", "en": "UGC" },
-      { "es": "Reseñas", "en": "Reviews" },
-      { "es": "Unboxing" },
-      { "es": "Teatro", "en": "Theatre" }
+      {
+        "es": "UGC",
+        "en": "UGC"
+      },
+      {
+        "es": "Reseñas",
+        "en": "Reviews"
+      },
+      {
+        "es": "Unboxing"
+      },
+      {
+        "es": "Teatro",
+        "en": "Theatre"
+      }
     ],
     "heroPhotos": [
-      { "url": "https://cdn.sanity.io/images/fixture/production/retrato-frontal-1200x1500.jpg", "width": 1200, "height": 1500 },
-      { "url": "https://cdn.sanity.io/images/fixture/production/retrato-perfil-1200x1500.jpg", "width": 1200, "height": 1500 }
+      {
+        "url": "https://cdn.sanity.io/images/fixture/production/retrato-frontal-1200x1500.jpg",
+        "width": 1200,
+        "height": 1500
+      },
+      {
+        "url": "https://cdn.sanity.io/images/fixture/production/retrato-perfil-1200x1500.jpg",
+        "width": 1200,
+        "height": 1500
+      }
     ],
     "heroVideoUrl": "https://cdn.sanity.io/files/fixture/production/hero-montaje.mp4",
     "aboutText": {
       "es": "Texto de prueba sobre mí. Este párrafo es contenido ficticio para las pruebas.",
       "en": "Sample about text. This paragraph is placeholder content for tests."
     },
-    "aboutPhoto": { "url": "https://cdn.sanity.io/images/fixture/production/retrato-sobre-mi-1200x1500.jpg", "width": 1200, "height": 1500 },
+    "aboutPhoto": {
+      "url": "https://cdn.sanity.io/images/fixture/production/retrato-sobre-mi-1200x1500.jpg",
+      "width": 1200,
+      "height": 1500
+    },
     "languages": [
-      { "es": "Español (nativo)", "en": "Spanish (native)" },
-      { "es": "Inglés", "en": "English" },
-      { "es": "Portugués", "en": "Portuguese" }
+      {
+        "es": "Español (nativo)",
+        "en": "Spanish (native)"
+      },
+      {
+        "es": "Inglés",
+        "en": "English"
+      },
+      {
+        "es": "Portugués",
+        "en": "Portuguese"
+      }
     ],
     "email": "prueba@example.com",
     "instagramUrl": "https://www.instagram.com/cuenta.de.prueba/",
@@ -29,46 +64,90 @@
     "showCasting": false,
     "casting": {
       "height": "1,60 m",
-      "hair": { "es": "Castaño", "en": "Brown" },
-      "eyes": { "es": "Marrones", "en": "Brown" }
+      "hair": {
+        "es": "Castaño",
+        "en": "Brown"
+      },
+      "eyes": {
+        "es": "Marrones",
+        "en": "Brown"
+      }
     }
   },
   "categories": [
-    { "slug": "review", "title": { "es": "Reseña", "en": "Review" } },
-    { "slug": "unboxing", "title": { "es": "Unboxing" } },
-    { "slug": "sin-videos", "title": { "es": "Tipo sin vídeos", "en": "Empty type" } }
+    {
+      "slug": "review",
+      "title": {
+        "es": "Reseña",
+        "en": "Review"
+      }
+    },
+    {
+      "slug": "unboxing",
+      "title": {
+        "es": "Unboxing"
+      }
+    },
+    {
+      "slug": "sin-videos",
+      "title": {
+        "es": "Tipo sin vídeos",
+        "en": "Empty type"
+      }
+    }
   ],
   "videos": [
     {
       "_id": "sin-poster",
-      "title": { "es": "Vídeo de prueba sin portada", "en": "Sample video without cover" },
+      "title": {
+        "es": "Vídeo de prueba sin portada",
+        "en": "Sample video without cover"
+      },
       "category": "unboxing",
       "brand": "Marca de prueba",
       "videoUrl": "https://cdn.sanity.io/files/fixture/production/sin-poster.mp4",
       "poster": null,
-      "description": { "es": "Descripción de prueba." },
+      "description": {
+        "es": "Descripción de prueba."
+      },
       "featured": false,
       "order": 2
     },
     {
       "_id": "sin-en",
-      "title": { "es": "Vídeo de prueba solo en español" },
+      "title": {
+        "es": "Vídeo de prueba solo en español"
+      },
       "category": "review",
       "brand": "Marca de prueba",
       "videoUrl": "https://cdn.sanity.io/files/fixture/production/sin-en.mp4",
-      "poster": { "url": "https://cdn.sanity.io/images/fixture/production/portada-sin-en-1080x1920.jpg", "width": 1080, "height": 1920 },
+      "poster": {
+        "url": "https://cdn.sanity.io/images/fixture/production/portada-sin-en-1080x1920.jpg",
+        "width": 1080,
+        "height": 1920
+      },
       "description": null,
       "featured": false,
       "order": 1
     },
     {
       "_id": "destacado",
-      "title": { "es": "Vídeo de prueba destacado", "en": "Featured sample video" },
+      "title": {
+        "es": "Vídeo de prueba destacado",
+        "en": "Featured sample video"
+      },
       "category": "review",
       "brand": null,
       "videoUrl": "https://cdn.sanity.io/files/fixture/production/destacado.mp4",
-      "poster": { "url": "https://cdn.sanity.io/images/fixture/production/portada-destacado-1080x1920.jpg", "width": 1080, "height": 1920 },
-      "description": { "es": "Descripción de prueba.", "en": "Sample description." },
+      "poster": {
+        "url": "https://cdn.sanity.io/images/fixture/production/portada-destacado-1080x1920.jpg",
+        "width": 1080,
+        "height": 1920
+      },
+      "description": {
+        "es": "Descripción de prueba.",
+        "en": "Sample description."
+      },
       "featured": true,
       "order": 9
     },
@@ -81,7 +160,11 @@
       "category": "unboxing",
       "brand": "Marca de prueba con un nombre bastante largo",
       "videoUrl": "https://cdn.sanity.io/files/fixture/production/titulo-largo.mp4",
-      "poster": { "url": "https://cdn.sanity.io/images/fixture/production/portada-titulo-largo-1080x1920.jpg", "width": 1080, "height": 1920 },
+      "poster": {
+        "url": "https://cdn.sanity.io/images/fixture/production/portada-titulo-largo-1080x1920.jpg",
+        "width": 1080,
+        "height": 1920
+      },
       "description": null,
       "featured": false
     }
@@ -94,9 +177,16 @@
       "role": "Personaje de prueba",
       "year": 2019,
       "company": "Compañía de prueba",
-      "description": { "es": "Descripción de prueba.", "en": "Sample description." },
+      "description": {
+        "es": "Descripción de prueba.",
+        "en": "Sample description."
+      },
       "photos": [
-        { "url": "https://cdn.sanity.io/images/fixture/production/escena-1-1600x1067.jpg", "width": 1600, "height": 1067 }
+        {
+          "url": "https://cdn.sanity.io/images/fixture/production/escena-1-1600x1067.jpg",
+          "width": 1600,
+          "height": 1067
+        }
       ],
       "videoUrl": null
     },
@@ -112,9 +202,47 @@
       "videoUrl": "https://cdn.sanity.io/files/fixture/production/corto-reciente.mp4"
     }
   ],
-  "brands": [{ "name": "Marca de prueba", "logoUrl": null }],
+  "brands": [
+    {
+      "name": "Marca de prueba",
+      "logoUrl": null
+    }
+  ],
   "services": [
-    { "name": { "es": "Servicio de prueba dos", "en": "Sample service two" }, "description": { "es": "Descripción de prueba." }, "order": 2 },
-    { "name": { "es": "Servicio de prueba uno", "en": "Sample service one" }, "description": null, "order": 1 }
+    {
+      "name": {
+        "es": "Servicio de prueba dos",
+        "en": "Sample service two"
+      },
+      "description": {
+        "es": "Descripción de prueba."
+      },
+      "order": 2
+    },
+    {
+      "name": {
+        "es": "Servicio de prueba uno",
+        "en": "Sample service one"
+      },
+      "description": null,
+      "order": 1
+    }
+  ],
+  "testimonials": [
+    {
+      "_id": "op-1",
+      "quote": "Sample client review text used only in tests.",
+      "quoteLang": "en",
+      "author": null,
+      "role": null,
+      "project": {
+        "es": "Vídeos testimoniales UGC",
+        "en": "UGC testimonial videos"
+      },
+      "rating": 4.8,
+      "source": "upwork",
+      "sourceUrl": "https://www.upwork.com/freelancers/~prueba",
+      "order": null
+    }
   ]
 }

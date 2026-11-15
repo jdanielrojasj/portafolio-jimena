@@ -20,6 +20,7 @@ export const structure: StructureResolver = (S) =>
     .title('Contenido')
     .items([
       S.documentTypeListItem('videoPiece').title('Vídeos'),
+      S.documentTypeListItem('testimonial').title('Opiniones'),
       S.documentTypeListItem('actingWork').title('Trabajos como actriz'),
       S.documentTypeListItem('service').title('Servicios'),
       S.documentTypeListItem('brand').title('Marcas'),

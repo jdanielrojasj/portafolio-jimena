@@ -5,6 +5,7 @@ test('el orden de secciones es el aprobado', async ({ page }) => {
   expect(await page.locator('main > section').evaluateAll((s) => s.map((x) => x.id))).toEqual([
     'portada',
     'trabajo',
+    'opiniones',
     'servicios',
     'actriz',
     'sobre-mi',
@@ -84,6 +85,7 @@ test('el menú enlaza todas las secciones presentes', async ({ page }) => {
   await page.goto('/')
   expect(await page.locator('#site-nav a').evaluateAll((a) => a.map((x) => x.getAttribute('href')))).toEqual([
     '#trabajo',
+    '#opiniones',
     '#servicios',
     '#actriz',
     '#sobre-mi',
@@ -93,6 +95,33 @@ test('el menú enlaza todas las secciones presentes', async ({ page }) => {
 
 test('cada sección tiene un título de nivel 2', async ({ page }) => {
   await page.goto('/')
-  for (const id of ['trabajo', 'servicios', 'actriz', 'sobre-mi', 'contacto'])
+  for (const id of ['trabajo', 'opiniones', 'servicios', 'actriz', 'sobre-mi', 'contacto'])
     await expect(page.locator(`#${id} h2`)).toHaveCount(1)
+})
+
+test('una opinión se muestra destacada, en su idioma original y con su fuente', async ({ page }) => {
+  await page.goto('/')
+  const section = page.locator('#opiniones')
+  await expect(section.locator('h2')).toHaveText('Lo que dicen quienes han trabajado conmigo')
+  const quote = section.locator('blockquote')
+  await expect(quote).toHaveCount(1)
+  await expect(quote).toContainText('Sample client review text used only in tests.')
+  await expect(quote).toHaveAttribute('lang', 'en')
+  await expect(section.getByRole('img', { name: 'Valoración: 4,8 de 5' })).toBeVisible()
+  await expect(section).toContainText('Cliente en Upwork')
+  await expect(section).toContainText('Vídeos testimoniales UGC')
+  const link = section.getByRole('link', { name: /Ver en Upwork/ })
+  await expect(link).toHaveAttribute('href', 'https://www.upwork.com/freelancers/~prueba')
+  await expect(link).toHaveAttribute('target', '_blank')
+  await expect(link).toHaveAttribute('rel', /noopener/)
+})
+
+test('en inglés la opinión en inglés no lleva lang y los textos fijos se traducen', async ({ page }) => {
+  await page.goto('/en/')
+  const section = page.locator('#opiniones')
+  await expect(section.locator('h2')).toHaveText("What people I've worked with say")
+  await expect(section.locator('blockquote')).not.toHaveAttribute('lang', /.+/)
+  await expect(section.getByRole('img', { name: 'Rating: 4.8 out of 5' })).toBeVisible()
+  await expect(section).toContainText('Upwork client')
+  await expect(section.getByRole('link', { name: /See on Upwork/ })).toBeVisible()
 })

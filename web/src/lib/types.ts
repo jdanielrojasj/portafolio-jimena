@@ -40,6 +40,27 @@ export interface ActingItem {
   videoUrl?: string
 }
 
+export interface TestimonialItem {
+  id: string
+  /** Texto exacto, en su idioma original. */
+  quote: string
+  /** Idioma del texto: 'es', 'en' o 'pt'. */
+  quoteLang: string
+  /** Vacío si no se sabe quién la escribió. */
+  author: string
+  role: string
+  roleLang?: Locale
+  project: string
+  projectLang?: Locale
+  /** Estrellas sobre 5; sin valor si no hubo puntuación. */
+  rating?: number
+  /** 'upwork', 'linkedin', 'directo' o vacío. */
+  source: string
+  /** Nombre visible de la fuente ('Upwork', 'LinkedIn') o vacío. */
+  sourceLabel: string
+  sourceUrl?: string
+}
+
 export interface SiteData {
   locale: Locale
   tagline: string
@@ -54,6 +75,8 @@ export interface SiteData {
   showBrands: boolean
   brands: { name: string; logoUrl?: string }[]
   services: { name: string; nameLang?: Locale; description: string; descriptionLang?: Locale }[]
+  /** En el orden que marca Jimena. */
+  testimonials: TestimonialItem[]
   /** Del más reciente al más antiguo. */
   actingWorks: ActingItem[]
   showCasting: boolean
@@ -131,4 +154,18 @@ export interface RawSite {
   actingWorks: Maybe<RawActing[]>
   brands: Maybe<{ name?: Maybe<string>; logoUrl?: Maybe<string> }[]>
   services: Maybe<{ name?: Localized; description?: Localized; order?: Maybe<number> }[]>
+  testimonials?: Maybe<RawTestimonial[]>
+}
+
+export interface RawTestimonial {
+  _id: string
+  quote?: Maybe<string>
+  quoteLang?: Maybe<string>
+  author?: Maybe<string>
+  role?: Localized
+  project?: Localized
+  rating?: Maybe<number>
+  source?: Maybe<string>
+  sourceUrl?: Maybe<string>
+  order?: Maybe<number>
 }

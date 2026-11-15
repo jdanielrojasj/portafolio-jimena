@@ -1,7 +1,10 @@
 import { pick, pickLang, type Locale } from './i18n'
-import type { ActingItem, Img, RawImg, RawSite, SiteData, VideoItem } from './types'
+import type { ActingItem, Img, RawImg, RawSite, SiteData, TestimonialItem, VideoItem } from './types'
 
 const SITE_NAME = 'Jimena Meléndez'
+
+const SOURCE_LABELS: Record<string, string> = { upwork: 'Upwork', linkedin: 'LinkedIn' }
+const QUOTE_LANGS = new Set(['es', 'en', 'pt'])
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
 const pct = (n: number) => `${Math.round(clamp01(n) * 1000) / 10}%`
@@ -94,6 +97,25 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
       videoUrl: a.videoUrl || undefined,
     }))
 
+  // Campo "Orden" del panel; sin número, en el orden que llegan.
+  const testimonials: TestimonialItem[] = (raw.testimonials ?? [])
+    .filter((x) => Boolean(x?.quote?.trim()))
+    .sort((a, b) => byNumber(a.order, b.order))
+    .map((x) => ({
+      id: x._id,
+      quote: x.quote!.trim(),
+      quoteLang: x.quoteLang && QUOTE_LANGS.has(x.quoteLang) ? x.quoteLang : 'en',
+      author: x.author?.trim() ?? '',
+      role: tr(x.role),
+      roleLang: trl(x.role).lang,
+      project: tr(x.project),
+      projectLang: trl(x.project).lang,
+      rating: typeof x.rating === 'number' && x.rating > 0 && x.rating <= 5 ? x.rating : undefined,
+      source: x.source ?? '',
+      sourceLabel: SOURCE_LABELS[x.source ?? ''] ?? '',
+      sourceUrl: x.sourceUrl?.trim() || undefined,
+    }))
+
   return {
     locale,
     tagline: tr(s.tagline),
@@ -117,6 +139,7 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
         descriptionLang: trl(x.description).lang,
       }))
       .filter((x) => x.name),
+    testimonials,
     actingWorks,
     showCasting: Boolean(s.showCasting),
     casting: {

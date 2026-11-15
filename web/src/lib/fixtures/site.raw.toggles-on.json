@@ -263,5 +263,54 @@
       },
       "order": 9
     }
+  ],
+  "testimonials": [
+    {
+      "_id": "op-b",
+      "quote": "Segunda opinión de prueba, escrita en español.",
+      "quoteLang": "es",
+      "author": "Persona de prueba",
+      "role": {
+        "es": "Directora de prueba"
+      },
+      "project": {
+        "es": "Vídeos testimoniales UGC",
+        "en": "UGC testimonial videos"
+      },
+      "rating": 5,
+      "source": "directo",
+      "sourceUrl": null,
+      "order": 2
+    },
+    {
+      "_id": "op-a",
+      "quote": "Sample client review text used only in tests.",
+      "quoteLang": "en",
+      "author": null,
+      "role": null,
+      "project": {
+        "es": "Vídeos testimoniales UGC",
+        "en": "UGC testimonial videos"
+      },
+      "rating": 4.8,
+      "source": "upwork",
+      "sourceUrl": "https://www.upwork.com/freelancers/~prueba",
+      "order": 1
+    },
+    {
+      "_id": "op-c",
+      "quote": "Opiniãodeprovacomumapalavramuitolongasemespaçosparatestar",
+      "quoteLang": "pt",
+      "author": null,
+      "role": null,
+      "project": {
+        "es": "Vídeos testimoniales UGC",
+        "en": "UGC testimonial videos"
+      },
+      "rating": null,
+      "source": "linkedin",
+      "sourceUrl": "https://www.upwork.com/freelancers/~prueba",
+      "order": 3
+    }
   ]
 }

@@ -6,7 +6,7 @@ import type { RawSite } from '../src/lib/types'
 
 const raw = rawJson as RawSite
 const d = (l: Locale = 'es') => toSiteData(raw, l)
-const empty: RawSite = { settings: null, categories: [], videos: [], actingWorks: [], brands: [], services: [] }
+const empty: RawSite = { settings: null, categories: [], videos: [], actingWorks: [], brands: [], services: [], testimonials: [] }
 
 test('los destacados van primero y el resto por orden', () => {
   expect(d().videos.map((v) => v.id)).toEqual(['destacado', 'sin-en', 'sin-poster', 'titulo-largo'])
@@ -188,4 +188,44 @@ test('la foto para compartir usa la de "Ajustes" y, si no hay, la primera de por
   expect(toSiteData({ ...empty, settings: { email: 'a@b.c', shareImage: share } }, 'es').shareImage?.url).toBe('https://x/share.jpg')
   expect(d().shareImage?.url).toBe(d().heroPhotos[0].url)
   expect(toSiteData(empty, 'es').shareImage).toBeUndefined()
+})
+
+// ---------- Opiniones ----------
+
+test('las opiniones se preparan con su idioma original, valoración y fuente', () => {
+  const [op] = d('es').testimonials
+  expect(op).toMatchObject({
+    id: 'op-1',
+    quote: 'Sample client review text used only in tests.',
+    quoteLang: 'en',
+    author: '',
+    project: 'Vídeos testimoniales UGC',
+    rating: 4.8,
+    source: 'upwork',
+    sourceLabel: 'Upwork',
+    sourceUrl: 'https://www.upwork.com/freelancers/~prueba',
+  })
+  expect(d('en').testimonials[0].project).toBe('UGC testimonial videos')
+})
+
+test('las opiniones sin texto se descartan y las valoraciones raras se ignoran', () => {
+  const data = toSiteData(
+    {
+      ...empty,
+      testimonials: [
+        { _id: 'vacia', quote: '   ' },
+        { _id: 'alta', quote: 'Hola', rating: 7 },
+        { _id: 'cero', quote: 'Hola', rating: 0 },
+      ],
+    },
+    'es',
+  )
+  expect(data.testimonials.map((x) => x.id)).toEqual(['alta', 'cero'])
+  expect(data.testimonials.map((x) => x.rating)).toEqual([undefined, undefined])
+  // Sin idioma indicado se asume el inglés (Upwork) y sin fuente, ninguna.
+  expect(data.testimonials[0]).toMatchObject({ quoteLang: 'en', source: '', sourceLabel: '' })
+})
+
+test('sin opiniones la lista queda vacía', () => {
+  expect(toSiteData(empty, 'es').testimonials).toEqual([])
 })

@@ -128,3 +128,15 @@ test('la consulta trae la foto para compartir', async () => {
   const data = toSiteData((await result.get()) as RawSite, 'es')
   expect(data.shareImage).toMatchObject({ url: escena.url, width: 1600, height: 1067 })
 })
+
+test('la consulta trae las opiniones en el orden que marca Jimena', async () => {
+  const extra = [
+    { _id: 't2', _type: 'testimonial', _createdAt: '2026-01-02T00:00:00Z', quote: 'Dos', quoteLang: 'es', order: 2 },
+    { _id: 't1', _type: 'testimonial', _createdAt: '2026-01-01T00:00:00Z', quote: 'Uno', quoteLang: 'en', order: 1, rating: 4.8, source: 'upwork', sourceUrl: 'https://www.upwork.com/x', project: { es: 'Proyecto' } },
+    { _id: 't3', _type: 'testimonial', _createdAt: '2026-01-03T00:00:00Z', quote: 'Sin orden' },
+  ]
+  const result = await evaluate(parse(SITE_QUERY), { dataset: [...dataset, ...extra] })
+  const data = toSiteData((await result.get()) as RawSite, 'es')
+  expect(data.testimonials.map((x) => x.quote)).toEqual(['Uno', 'Dos', 'Sin orden'])
+  expect(data.testimonials[0]).toMatchObject({ rating: 4.8, sourceLabel: 'Upwork', project: 'Proyecto' })
+})

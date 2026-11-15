@@ -26,6 +26,13 @@ export function pickLang(value: Localized, locale: Locale): { text: string; lang
   return { text, lang: text && !own && locale !== DEFAULT_LOCALE ? DEFAULT_LOCALE : undefined }
 }
 
+const NUMBER_LOCALES: Record<Locale, string> = { es: 'es-ES', en: 'en-GB' }
+
+/** Número con el separador decimal de cada idioma (4,8 / 4.8). */
+export function formatNumber(locale: Locale, n: number): string {
+  return new Intl.NumberFormat(NUMBER_LOCALES[locale], { maximumFractionDigits: 1 }).format(n)
+}
+
 /** Ruta de la portada en un idioma, con ancla opcional a una sección. */
 export function localePath(locale: Locale, hash?: string): string {
   const base = locale === DEFAULT_LOCALE ? '/' : `/${locale}/`
@@ -73,6 +80,17 @@ const ui = {
   'contact.eyebrow': { es: 'Contacto', en: 'Contact' },
   'hero.reel': { es: 'Montaje de vídeos de Jimena Meléndez', en: 'Showreel of Jimena Meléndez' },
   'motion.pause': { es: 'Pausar movimiento', en: 'Pause motion' },
+  'nav.testimonials': { es: 'Opiniones', en: 'Reviews' },
+  'section.testimonials': {
+    es: 'Lo que dicen quienes han trabajado conmigo',
+    en: "What people I've worked with say",
+  },
+  'testimonials.eyebrow': { es: 'Opiniones', en: 'Testimonials' },
+  'testimonials.clientOf': { es: 'Cliente en {source}', en: '{source} client' },
+  'testimonials.client': { es: 'Cliente', en: 'Client' },
+  'testimonials.seeOn': { es: 'Ver en {source}', en: 'See on {source}' },
+  'testimonials.see': { es: 'Ver la opinión', en: 'See the review' },
+  'testimonials.rating': { es: 'Valoración: {n} de 5', en: 'Rating: {n} out of 5' },
   'meta.role': { es: 'Actriz y creadora de contenido UGC', en: 'Actress & UGC creator' },
 } as const satisfies Record<string, Record<Locale, string>>
 
