@@ -3,7 +3,7 @@ import { expect, test } from './base'
 test('la portada muestra nombre, línea y un único botón de contacto', async ({ page }) => {
   await page.goto('/')
   const hero = page.locator('#portada')
-  await expect(hero.getByRole('heading', { level: 1 })).toHaveText(/Jimena\s*Melendez/)
+  await expect(hero.getByRole('heading', { level: 1 })).toHaveText(/Jimena\s*Meléndez/)
   await expect(hero.getByText('Actriz y creadora de contenido UGC')).toBeVisible()
   await expect(hero.getByRole('link', { name: 'Trabajemos juntas' })).toHaveAttribute('href', '#contacto')
   await expect(hero.getByRole('link')).toHaveCount(1)
@@ -31,7 +31,7 @@ test('la portada muestra las dos fotos a los lados del vídeo', async ({ page })
 test('las fotos de portada llevan texto alternativo y tamaño', async ({ page }) => {
   await page.goto('/')
   for (const img of await page.locator('#portada img').all()) {
-    await expect(img).toHaveAttribute('alt', 'Jimena Melendez')
+    await expect(img).toHaveAttribute('alt', 'Jimena Meléndez')
     await expect(img).toHaveAttribute('width', /\d+/)
     await expect(img).toHaveAttribute('height', /\d+/)
   }

@@ -1,6 +1,6 @@
-# Portafolio de Jimena Melendez
+# Portafolio de Jimena Meléndez
 
-Web de portafolio bilingüe (español / inglés) para Jimena Melendez, actriz y creadora de contenido UGC.
+Web de portafolio bilingüe (español / inglés) para Jimena Meléndez, actriz y creadora de contenido UGC.
 
 - `web/` — la web pública (Astro, estática).
 - `studio/` — el panel de contenidos (Sanity Studio).

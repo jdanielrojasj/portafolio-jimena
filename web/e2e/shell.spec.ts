@@ -29,7 +29,7 @@ test('declara las versiones alternativas', async ({ page }) => {
 
 test('el título y la descripción están en el idioma de la página', async ({ page }) => {
   await page.goto('/')
-  await expect(page).toHaveTitle(/Jimena Melendez/)
+  await expect(page).toHaveTitle(/Jimena Meléndez/)
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /Actriz/)
   await page.goto('/en/')
   await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /Actress/)

@@ -2,7 +2,7 @@ import { expect, test } from './base'
 
 test('sin contenido la página carga con portada y contacto, sin secciones vacías', async ({ page }) => {
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Jimena\s*Melendez/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(/Jimena\s*Meléndez/)
   expect(await page.locator('main > section').evaluateAll((s) => s.map((x) => x.id))).toEqual(['portada', 'contacto'])
   await expect(page.locator('[data-marquee]')).toHaveCount(0)
   await expect(page.locator('#portada [data-hero-piece]')).toHaveCount(0)

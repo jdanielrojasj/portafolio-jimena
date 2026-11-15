@@ -1,7 +1,7 @@
 import { pick, pickLang, type Locale } from './i18n'
 import type { ActingItem, Img, RawImg, RawSite, SiteData, VideoItem } from './types'
 
-const SITE_NAME = 'Jimena Melendez'
+const SITE_NAME = 'Jimena Meléndez'
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
 const pct = (n: number) => `${Math.round(clamp01(n) * 1000) / 10}%`

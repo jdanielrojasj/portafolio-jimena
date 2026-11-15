@@ -71,7 +71,7 @@ const ui = {
   'services.eyebrow': { es: 'Qué ofrezco', en: 'What I offer' },
   'acting.eyebrow': { es: 'Teatro y cámara', en: 'Stage and screen' },
   'contact.eyebrow': { es: 'Contacto', en: 'Contact' },
-  'hero.reel': { es: 'Montaje de vídeos de Jimena Melendez', en: 'Showreel of Jimena Melendez' },
+  'hero.reel': { es: 'Montaje de vídeos de Jimena Meléndez', en: 'Showreel of Jimena Meléndez' },
   'motion.pause': { es: 'Pausar movimiento', en: 'Pause motion' },
   'meta.role': { es: 'Actriz y creadora de contenido UGC', en: 'Actress & UGC creator' },
 } as const satisfies Record<string, Record<Locale, string>>

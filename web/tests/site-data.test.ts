@@ -44,7 +44,7 @@ test('servicios por orden', () => {
 
 test('las fotos llevan dimensiones y texto alternativo', () => {
   expect(d().heroPhotos).toHaveLength(2)
-  expect(d().heroPhotos[0]).toMatchObject({ width: 1200, height: 1500, alt: 'Jimena Melendez' })
+  expect(d().heroPhotos[0]).toMatchObject({ width: 1200, height: 1500, alt: 'Jimena Meléndez' })
   expect(d().actingWorks[1].photos[0].alt).toBe('Obra de prueba antigua')
 })
 
@@ -142,7 +142,7 @@ test('el recorte del panel se aplica a la foto y el punto de interés se traslad
 
 test('sin recorte ni punto de interés la foto queda como está', () => {
   const data = toSiteData({ ...empty, settings: { email: 'a@b.c', aboutPhoto: { url: 'https://x/y.jpg', width: 10, height: 20 } } }, 'es')
-  expect(data.aboutPhoto).toEqual({ url: 'https://x/y.jpg', width: 10, height: 20, alt: 'Jimena Melendez', position: undefined })
+  expect(data.aboutPhoto).toEqual({ url: 'https://x/y.jpg', width: 10, height: 20, alt: 'Jimena Meléndez', position: undefined })
 })
 
 test('la portada de un vídeo también respeta recorte y punto de interés', () => {

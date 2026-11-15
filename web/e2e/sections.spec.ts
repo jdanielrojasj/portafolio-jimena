@@ -62,7 +62,7 @@ test('sobre mí muestra el texto, la foto y los idiomas', async ({ page }) => {
   await page.goto('/en/')
   const about = page.locator('#sobre-mi')
   await expect(about).toContainText('Sample about text')
-  await expect(about.locator('img')).toHaveAttribute('alt', 'Jimena Melendez')
+  await expect(about.locator('img')).toHaveAttribute('alt', 'Jimena Meléndez')
   await expect(about.locator('[data-languages] li')).toHaveText(['Spanish (native)', 'English', 'Portuguese'])
 })
 
