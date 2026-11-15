@@ -10,10 +10,21 @@ interface Props {
 const { data } = Astro.props
 const { locale, heroPhotos, heroVideoUrl } = data
 const [left, right] = heroPhotos
-const pieces = [left, heroVideoUrl ? 'video' : undefined, right].filter(Boolean).length
+const photos = [left, right].filter(Boolean).length
+const pieces = photos + (heroVideoUrl ? 1 : 0)
 const tagline = data.tagline || t(locale, 'meta.role')
 // Hay algo que se mueve solo: el montaje de portada o la franja de palabras.
 const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
+
+// La portada ocupa exactamente una pantalla. Las piezas se dimensionan por
+// su altura (H): el vídeo 9:16 mide H de alto y las fotos 4:5, SIDE · H.
+// "units" es el ancho total en unidades de H, para que el trío quepa
+// también a lo ancho: H = min(alto disponible, ancho disponible / units).
+const SIDE = heroVideoUrl ? 0.68 : 1
+const units = (heroVideoUrl ? 9 / 16 : 0) + photos * (4 / 5) * SIDE
+// Fotos pegadas al vídeo: en móvil se solapan con él (ver --overlap en CSS).
+const sides = heroVideoUrl ? photos : 0
+const trioStyle = `--units: ${units.toFixed(4)}; --gaps: ${Math.max(pieces - 1, 0)}; --side: ${SIDE}; --sides: ${sides}`
 ---
 
 <section id="portada" class="hero" data-hero>
@@ -33,10 +44,10 @@ const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
 
     {
       pieces > 0 && (
-        <div class="trio" data-pieces={pieces}>
+        <div class="trio" style={trioStyle} data-pieces={pieces}>
           {left && (
             <figure class="piece piece--side" data-hero-piece data-speed="-0.12">
-              <Photo img={left} sizes="(min-width: 60rem) 22rem, 30vw" eager />
+              <Photo img={left} sizes="(min-width: 48rem) 22vw, 30vw" eager />
             </figure>
           )}
           {heroVideoUrl && (
@@ -55,7 +66,7 @@ const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
           )}
           {right && (
             <figure class="piece piece--side" data-hero-piece data-speed="-0.2">
-              <Photo img={right} sizes="(min-width: 60rem) 22rem, 30vw" eager />
+              <Photo img={right} sizes="(min-width: 48rem) 22vw, 30vw" eager />
             </figure>
           )}
         </div>
@@ -81,13 +92,176 @@ const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
 </section>
 
 <style>
+  /* ---------- Una pantalla exacta ---------- */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100svh;
+    /* En pantallas muy bajas (un móvil en horizontal) se permite scroll. */
+    min-height: 34rem;
+    padding-top: calc(var(--header-h) + clamp(0.5rem, 2.5svh, 2rem));
+    padding-bottom: clamp(1rem, 3svh, 2.25rem);
+  }
+
+  .hero > .wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    row-gap: clamp(0.75rem, 2.5svh, 1.75rem);
+  }
+
+  /* ---------- Nombre ---------- */
+  .name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    /* Limitado también por el alto, para dejar sitio al trío. */
+    font-size: min(var(--text-hero), 13svh);
+    line-height: 0.86;
+    letter-spacing: -0.045em;
+    font-variation-settings: 'opsz' 144;
+    margin-left: -0.04em;
+  }
+
+  /* Cada línea recorta su texto para que pueda entrar deslizándose. */
+  .name .line {
+    display: block;
+    overflow: hidden;
+    padding: 0.1em 0.08em 0.14em;
+    margin: -0.1em -0.08em -0.14em;
+  }
+
+  .name .line > span {
+    display: block;
+  }
+
+  .name .line:last-child {
+    text-align: right;
+  }
+
+  /* En pantallas anchas, el nombre en una sola línea. */
+  @media (min-width: 48rem) {
+    .name {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 0.24em;
+      font-size: min(10.5vw, 19svh);
+    }
+
+    .name .line:last-child {
+      text-align: left;
+    }
+  }
+
+  /* ---------- Línea de presentación y contacto ---------- */
+  .intro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+  }
+
+  .tagline {
+    max-width: 22ch;
+    font-size: var(--text-lg);
+    line-height: 1.3;
+    color: var(--ink-soft);
+    text-wrap: balance;
+  }
+
+  @media (min-width: 48rem) {
+    .tagline {
+      max-width: none;
+    }
+  }
+
+  /* ---------- Trío: foto · vídeo · foto ---------- */
+  .trio {
+    container-type: size;
+    --gap: clamp(0.5rem, 1.6vw, 1.5rem);
+    /* Parte de cada foto que queda detrás del vídeo, en unidades de H. */
+    --overlap: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--gap);
+    min-height: 0;
+  }
+
+  .piece {
+    /* Alto del vídeo: lo que quepa de alto o de ancho, lo que sea menor. */
+    --h: min(100cqh, (100cqw - var(--gaps) * var(--gap)) / (var(--units) - var(--sides) * var(--overlap)));
+    flex: none;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--paper-2);
+    will-change: transform;
+  }
+
+  .piece--main {
+    height: var(--h);
+    aspect-ratio: 9 / 16;
+    background: var(--dark);
+    box-shadow: 0 1.5rem 3.5rem -1.5rem rgb(27 26 24 / 0.45);
+  }
+
+  .piece--side {
+    height: calc(var(--h) * var(--side));
+    aspect-ratio: 4 / 5;
+  }
+
+  /* En pantallas estrechas, collage: las fotos asoman por detrás del
+     vídeo, una algo más arriba y otra más abajo, y el vídeo gana tamaño. */
+  @media (max-width: 47.99rem) {
+    .trio {
+      --gap: 0px;
+      --overlap: 0.2;
+    }
+
+    .piece--main {
+      position: relative;
+      z-index: 1;
+    }
+
+    .piece--side + .piece--main,
+    .piece--main + .piece--side {
+      margin-left: calc(var(--overlap) * var(--h) * -1);
+    }
+
+    .piece--side:first-child {
+      translate: 0 -14%;
+    }
+
+    .piece--side:last-child {
+      translate: 0 14%;
+    }
+  }
+
+  .piece :global(img),
+  .piece video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---------- Botón de pausa ---------- */
   .motion-toggle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     min-height: 2.75rem;
-    margin: clamp(1rem, 3vw, 1.75rem) 0 0 auto;
-    padding: 0.5rem 0.25rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     font-size: var(--text-xs);
     font-weight: 600;
     letter-spacing: 0.06em;
@@ -112,100 +286,24 @@ const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
     display: block;
   }
 
-  .hero {
-    padding-top: calc(var(--header-h) + clamp(1.25rem, 4vw, 3rem));
-    padding-bottom: clamp(3rem, 8vw, 7rem);
-  }
+  /* En móvil, solo el icono: el texto sigue ahí para lectores de pantalla. */
+  @media (max-width: 47.99rem) {
+    .motion-toggle {
+      justify-content: center;
+      width: 2.75rem;
+      padding: 0;
+      bottom: 0.5rem;
+      right: 0.5rem;
+      color: var(--ink);
+    }
 
-  .name {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: var(--text-hero);
-    line-height: 0.86;
-    letter-spacing: -0.045em;
-    font-variation-settings: 'opsz' 144;
-    margin-left: -0.04em;
-  }
-
-  /* Cada línea recorta su texto para que pueda entrar deslizándose. */
-  .name .line {
-    display: block;
-    overflow: hidden;
-    padding: 0 0.08em 0.14em;
-    margin: 0 -0.08em -0.14em;
-  }
-
-  .name .line > span {
-    display: block;
-  }
-
-  .name .line:last-child {
-    text-align: right;
-  }
-
-  .intro {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem 2rem;
-    margin-top: clamp(1.5rem, 4vw, 2.75rem);
-  }
-
-  .tagline {
-    max-width: 22ch;
-    font-size: var(--text-lg);
-    line-height: 1.3;
-    color: var(--ink-soft);
-    text-wrap: balance;
-  }
-
-  .trio {
-    display: grid;
-    grid-template-columns: 1fr 1.32fr 1fr;
-    align-items: center;
-    gap: clamp(0.5rem, 2vw, 1.5rem);
-    max-width: 66rem;
-    margin: clamp(2rem, 6vw, 4.5rem) auto 0;
-  }
-
-  .trio[data-pieces='2'] {
-    grid-template-columns: 1fr 1.32fr;
-    max-width: 44rem;
-  }
-
-  .trio[data-pieces='1'] {
-    grid-template-columns: minmax(0, 24rem);
-    justify-content: center;
-  }
-
-  .piece {
-    overflow: hidden;
-    border-radius: var(--radius);
-    background: var(--paper-2);
-    will-change: transform;
-  }
-
-  .piece--side {
-    aspect-ratio: 4 / 5;
-  }
-
-  .piece--main {
-    aspect-ratio: 9 / 16;
-    background: var(--dark);
-    box-shadow: 0 1.5rem 3.5rem -1.5rem rgb(27 26 24 / 0.45);
-  }
-
-  /* Sin vídeo, las fotos ocupan el protagonismo con el mismo alto. */
-  .trio:not(:has(.piece--main)) {
-    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-    max-width: 44rem;
-  }
-
-  .piece :global(img),
-  .piece video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    .motion-toggle span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   }
 </style>
