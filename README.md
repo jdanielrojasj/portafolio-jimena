@@ -5,9 +5,15 @@ Web de portafolio bilingüe (español / inglés) para Jimena Meléndez, actriz y
 - `web/` — la web pública (Astro, estática).
 - `studio/` — el panel de contenidos (Sanity Studio).
 - `scripts/` — utilidades; `comprimir-video.cmd` (que lanza `comprimir-video.ps1`) prepara vídeos para la web.
-- `docs/` — diseño, plan de construcción y [guía de uso del panel](docs/guia-jimena.md).
+- `docs/` — [guía de uso del panel](docs/guia-jimena.md).
 
 El material original (vídeos y fotos) vive en `material/`, que está fuera del repositorio.
+
+## Direcciones
+
+- **Web:** https://portafolio-jimena.pages.dev (Cloudflare Pages, se publica sola con cada `git push` a `main` y cada vez que se publica algo en el panel).
+- **Panel:** https://portafolio-jimena.sanity.studio (proyecto de Sanity `t2a77pqu`, dataset `production`).
+- **Código:** https://github.com/jdanielrojasj/portafolio-jimena
 
 ## Cómo funciona
 
