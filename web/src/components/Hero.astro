@@ -17,14 +17,10 @@ const tagline = data.tagline || t(locale, 'meta.role')
 const moves = Boolean(heroVideoUrl) || data.marqueeWords.length > 0
 
 // La portada ocupa exactamente una pantalla. Las piezas se dimensionan por
-// su altura (H): el vídeo 9:16 mide H de alto y las fotos 4:5, SIDE · H.
-// "units" es el ancho total en unidades de H, para que el trío quepa
-// también a lo ancho: H = min(alto disponible, ancho disponible / units).
+// su altura (H): el vídeo 9:16 mide H de alto y las fotos, SIDE · H. El
+// ancho de las fotos (--side-aspect) lo decide el CSS según la pantalla.
 const SIDE = heroVideoUrl ? 0.68 : 1
-const units = (heroVideoUrl ? 9 / 16 : 0) + photos * (4 / 5) * SIDE
-// Fotos pegadas al vídeo: en móvil se solapan con él (ver --overlap en CSS).
-const sides = heroVideoUrl ? photos : 0
-const trioStyle = `--units: ${units.toFixed(4)}; --gaps: ${Math.max(pieces - 1, 0)}; --side: ${SIDE}; --sides: ${sides}`
+const trioStyle = `--photos: ${photos}; --has-video: ${heroVideoUrl ? 1 : 0}; --gaps: ${Math.max(pieces - 1, 0)}; --side: ${SIDE}`
 ---
 
 <section id="portada" class="hero" data-hero>
@@ -182,8 +178,10 @@ const trioStyle = `--units: ${units.toFixed(4)}; --gaps: ${Math.max(pieces - 1, 
   .trio {
     container-type: size;
     --gap: clamp(0.5rem, 1.6vw, 1.5rem);
-    /* Parte de cada foto que queda detrás del vídeo, en unidades de H. */
-    --overlap: 0;
+    /* Proporción (ancho / alto) de las fotos laterales. */
+    --side-aspect: 0.8;
+    /* Ancho total del trío en unidades de H, para que quepa también a lo ancho. */
+    --units: calc(var(--has-video) * 0.5625 + var(--photos) * var(--side-aspect) * var(--side));
     display: flex;
     justify-content: center;
     align-items: center;
@@ -193,7 +191,7 @@ const trioStyle = `--units: ${units.toFixed(4)}; --gaps: ${Math.max(pieces - 1, 
 
   .piece {
     /* Alto del vídeo: lo que quepa de alto o de ancho, lo que sea menor. */
-    --h: min(100cqh, (100cqw - var(--gaps) * var(--gap)) / (var(--units) - var(--sides) * var(--overlap)));
+    --h: min(100cqh, (100cqw - var(--gaps) * var(--gap)) / var(--units));
     flex: none;
     overflow: hidden;
     border-radius: var(--radius);
@@ -210,33 +208,14 @@ const trioStyle = `--units: ${units.toFixed(4)}; --gaps: ${Math.max(pieces - 1, 
 
   .piece--side {
     height: calc(var(--h) * var(--side));
-    aspect-ratio: 4 / 5;
+    aspect-ratio: var(--side-aspect);
   }
 
-  /* En pantallas estrechas, collage: las fotos asoman por detrás del
-     vídeo, una algo más arriba y otra más abajo, y el vídeo gana tamaño. */
+  /* En pantallas estrechas, fotos más alargadas (3:5) para que el vídeo
+     gane tamaño sin tapar ninguna foto. */
   @media (max-width: 47.99rem) {
     .trio {
-      --gap: 0px;
-      --overlap: 0.2;
-    }
-
-    .piece--main {
-      position: relative;
-      z-index: 1;
-    }
-
-    .piece--side + .piece--main,
-    .piece--main + .piece--side {
-      margin-left: calc(var(--overlap) * var(--h) * -1);
-    }
-
-    .piece--side:first-child {
-      translate: 0 -14%;
-    }
-
-    .piece--side:last-child {
-      translate: 0 14%;
+      --side-aspect: 0.6;
     }
   }
 

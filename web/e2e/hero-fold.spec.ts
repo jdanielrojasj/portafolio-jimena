@@ -54,6 +54,9 @@ for (const [project, sizes] of Object.entries(SIZES)) {
         expect(p.left, 'pieza por la izquierda').toBeGreaterThanOrEqual(0)
         expect(p.right, 'pieza por la derecha').toBeLessThanOrEqual(m.vw)
       }
+      // Las tres piezas se ven enteras: ninguna tapa a otra.
+      for (let i = 1; i < m.pieces.length; i++)
+        expect(m.pieces[i].left, 'piezas solapadas').toBeGreaterThanOrEqual(m.pieces[i - 1].right - 0.5)
       // El vídeo del centro es la pieza más alta y tiene presencia.
       expect(m.main.height).toBe(Math.max(...m.pieces.map((p) => p.height)))
       expect(m.main.height, 'altura del vídeo').toBeGreaterThanOrEqual(m.vh * 0.25)
