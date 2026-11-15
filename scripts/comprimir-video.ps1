@@ -66,9 +66,45 @@ if ($videos.Count -eq 0) {
 }
 
 # El lado largo se limita a 1920 px y el corto a 1080 px, sin deformar ni agrandar.
-$filtro = "scale='if(gt(iw,ih),min(1920,iw),min(1080,iw))':-2"
+function Get-Filtro([int]$Largo, [int]$Corto) {
+  "scale='if(gt(iw,ih),min($Largo,iw),min($Corto,iw))':-2"
+}
+$filtro = Get-Filtro 1920 1080
 $demasiadoGrandes = 0
 $fallidos = 0
+
+# Ejecuta ffmpeg hacia el archivo provisional. Si falla, no deja nada a medias.
+function Invoke-Ffmpeg([string]$Provisional, [string[]]$Argumentos) {
+  # -n: ffmpeg nunca sobrescribe un archivo existente. -stats muestra el progreso.
+  & ffmpeg -hide_banner -loglevel error -stats -n @Argumentos $Provisional
+  if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $Provisional)) {
+    if (Test-Path -LiteralPath $Provisional) {
+      Remove-Item -LiteralPath $Provisional -Force
+    }
+    return $false
+  }
+  return $true
+}
+
+# Datos del vídeo original: duración y si ya está listo para la web tal cual
+# (H.264 de 8 bits, sonido AAC o sin sonido, sin pasar de 1920 x 1080).
+function Get-InfoVideo([string]$Ruta) {
+  $json = & ffprobe -v error -show_entries 'format=duration:stream=codec_type,codec_name,pix_fmt,width,height' -of json $Ruta | Out-String | ConvertFrom-Json
+  $imagen = @($json.streams | Where-Object { $_.codec_type -eq 'video' })[0]
+  $sonidos = @($json.streams | Where-Object { $_.codec_type -eq 'audio' })
+  $apto = $false
+  if ($imagen) {
+    $largo = [math]::Max([int]$imagen.width, [int]$imagen.height)
+    $corto = [math]::Min([int]$imagen.width, [int]$imagen.height)
+    $apto = $imagen.codec_name -eq 'h264' -and $imagen.pix_fmt -eq 'yuv420p' -and
+      $largo -le 1920 -and $corto -le 1080 -and
+      ($sonidos.Count -eq 0 -or $sonidos[0].codec_name -eq 'aac')
+  }
+  [pscustomobject]@{
+    Duracion = [double]$json.format.duration
+    Apto     = $apto
+  }
+}
 
 foreach ($video in $videos) {
   $destino = Join-Path $Salida ($video.BaseName + $Sufijo + '.mp4')
@@ -90,20 +126,57 @@ foreach ($video in $videos) {
     Remove-Item -LiteralPath $provisional -Force
   }
 
-  Write-Host "Comprimiendo $($video.Name)..."
-  # -n: ffmpeg nunca sobrescribe un archivo existente. -stats muestra el progreso.
-  & ffmpeg -hide_banner -loglevel error -stats -n -i $video.FullName `
-    -vf $filtro -c:v libx264 -preset slow -crf $Calidad -pix_fmt yuv420p `
-    @Audio -movflags +faststart $provisional
+  $info = Get-InfoVideo $video.FullName
 
-  if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $provisional)) {
-    if (Test-Path -LiteralPath $provisional) {
-      Remove-Item -LiteralPath $provisional -Force
-    }
+  Write-Host "Comprimiendo $($video.Name)..."
+  $ok = Invoke-Ffmpeg $provisional (@('-i', $video.FullName,
+    '-vf', $filtro, '-c:v', 'libx264', '-preset', 'slow', '-crf', $Calidad, '-pix_fmt', 'yuv420p') + $Audio + @('-movflags', '+faststart'))
+  if (-not $ok) {
     Write-Host "  No se pudo comprimir $($video.Name)." -ForegroundColor Red
     $fallidos++
     continue
   }
+
+  # Un vídeo que ya venía comprimido para la web puede crecer al recomprimirlo.
+  # En ese caso se copia el original sin tocar la imagen ni el sonido.
+  if (-not $Portada -and $info.Apto -and (Get-Item -LiteralPath $provisional).Length -ge $video.Length) {
+    Remove-Item -LiteralPath $provisional -Force
+    Write-Host '  Ya estaba comprimido: se copia tal cual, sin perder calidad.'
+    $ok = Invoke-Ffmpeg $provisional @('-i', $video.FullName,
+      '-map', '0:v:0', '-map', '0:a:0?', '-c', 'copy', '-movflags', '+faststart')
+    if (-not $ok) {
+      Write-Host "  No se pudo copiar $($video.Name)." -ForegroundColor Red
+      $fallidos++
+      continue
+    }
+  }
+
+  # Un vídeo largo puede pasar del límite con la calidad normal. Se repite con
+  # la calidad justa para que quepa (con un 10 % de margen) y, si esa calidad es
+  # baja para 1080p, a 720p, que con pocos datos se ve más nítido.
+  if (-not $Portada -and (Get-Item -LiteralPath $provisional).Length -ge $LimiteMB * 1MB -and $info.Duracion -gt 0) {
+    $kbps = [math]::Floor($LimiteMB * 1MB * 8 * 0.9 / $info.Duracion / 1000 * 0.98) - 128
+    if ($kbps -lt 400) {
+      Remove-Item -LiteralPath $provisional -Force
+      Write-Host "  Es demasiado largo para caber en $LimiteMB MB con una calidad aceptable. Recórtalo y repite." -ForegroundColor Red
+      $demasiadoGrandes++
+      continue
+    }
+    $filtroLargo = if ($kbps -lt 2500) { Get-Filtro 1280 720 } else { $filtro }
+    $resolucion = if ($kbps -lt 2500) { '720p' } else { '1080p' }
+    Remove-Item -LiteralPath $provisional -Force
+    Write-Host "  Pasaba de $LimiteMB MB: se repite en $resolucion con la calidad justa para que quepa..."
+    $ok = Invoke-Ffmpeg $provisional (@('-i', $video.FullName,
+      '-vf', $filtroLargo, '-c:v', 'libx264', '-preset', 'slow',
+      '-b:v', "${kbps}k", '-maxrate', "$([math]::Floor($kbps * 1.5))k", '-bufsize', "$($kbps * 2)k",
+      '-pix_fmt', 'yuv420p') + $Audio + @('-movflags', '+faststart'))
+    if (-not $ok) {
+      Write-Host "  No se pudo comprimir $($video.Name)." -ForegroundColor Red
+      $fallidos++
+      continue
+    }
+  }
+
   Move-Item -LiteralPath $provisional -Destination $destino
 
   $mb = [math]::Round((Get-Item -LiteralPath $destino).Length / 1MB, 1)
