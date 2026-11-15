@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro'
 import Header from './Header.astro'
 import Hero from './Hero.astro'
 import Marquee from './Marquee.astro'
+import BrandWork from './BrandWork.astro'
+import VideoLightbox from './VideoLightbox.astro'
 import { t, type UiKey } from '../lib/i18n'
 import type { SiteData } from '../lib/types'
 
@@ -16,9 +18,16 @@ const { locale } = data
 const role = data.tagline || t(locale, 'meta.role')
 
 // Solo se enlazan en el menú las secciones que tienen contenido.
-const sections: { id: string; label: UiKey }[] = [
-  { id: 'contacto', label: 'nav.contact' },
-]
+const has = {
+  work: data.videos.length > 0,
+}
+
+const sections = (
+  [
+    has.work && { id: 'trabajo', label: 'nav.work' },
+    { id: 'contacto', label: 'nav.contact' },
+  ] as (false | { id: string; label: UiKey })[]
+).filter((s) => s !== false)
 ---
 
 <Base locale={locale} title={`Jimena Melendez — ${role}`} description={role} ogImage={data.heroPhotos[0]?.url}>
@@ -27,5 +36,7 @@ const sections: { id: string; label: UiKey }[] = [
   <main id="contenido">
     <Hero data={data} />
     <Marquee words={data.marqueeWords} />
+    {has.work && <BrandWork data={data} />}
   </main>
+  <VideoLightbox locale={locale} />
 </Base>
