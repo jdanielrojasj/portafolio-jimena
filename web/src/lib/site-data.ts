@@ -6,6 +6,15 @@ const SITE_NAME = 'Jimena Meléndez'
 const SOURCE_LABELS: Record<string, string> = { upwork: 'Upwork', linkedin: 'LinkedIn' }
 const QUOTE_LANGS = new Set(['es', 'en', 'pt'])
 
+/**
+ * Enlace del panel solo si es http(s). El panel ya lo valida, pero la API no:
+ * así un "javascript:" escrito por otra vía nunca llega a un href de la web.
+ */
+const httpUrl = (u: string | null | undefined): string | undefined => {
+  const t = u?.trim()
+  return t && /^https?:\/\//i.test(t) ? t : undefined
+}
+
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n))
 const pct = (n: number) => `${Math.round(clamp01(n) * 1000) / 10}%`
 
@@ -113,7 +122,7 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
       rating: typeof x.rating === 'number' && x.rating > 0 && x.rating <= 5 ? x.rating : undefined,
       source: x.source ?? '',
       sourceLabel: SOURCE_LABELS[x.source ?? ''] ?? '',
-      sourceUrl: x.sourceUrl?.trim() || undefined,
+      sourceUrl: httpUrl(x.sourceUrl),
     }))
 
   return {
@@ -153,8 +162,8 @@ export function toSiteData(raw: RawSite, locale: Locale): SiteData {
     shareImage: toImg(s.shareImage, SITE_NAME) ?? toImgs(s.heroPhotos, SITE_NAME)[0],
     languages: list(s.languages),
     email: s.email?.trim() ?? '',
-    instagramUrl: s.instagramUrl?.trim() ?? '',
-    tiktokUrl: s.tiktokUrl?.trim() || undefined,
+    instagramUrl: httpUrl(s.instagramUrl) ?? '',
+    tiktokUrl: httpUrl(s.tiktokUrl),
   }
 }
 
@@ -191,7 +200,7 @@ export async function getSiteData(
     // Una respuesta válida pero sin ajustes publicados (por ejemplo, si se
     // despublica la ficha o el dataset no es público) dejaría una web vacía.
     if (!raw.settings) throw new Error('no hay "Ajustes de la web" publicados')
-    if (!raw.settings.email?.trim() && !raw.settings.instagramUrl?.trim())
+    if (!raw.settings.email?.trim() && !httpUrl(raw.settings.instagramUrl))
       throw new Error('"Ajustes de la web" no tiene ni correo ni Instagram de contacto')
   } catch (cause) {
     const reason = cause instanceof Error ? cause.message : String(cause)

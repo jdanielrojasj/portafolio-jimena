@@ -15,6 +15,7 @@ export const brand = defineType({
       name: 'logo',
       title: 'Logo',
       type: 'image',
+      options: {storeOriginalFilename: false},
       description: 'Opcional. Si no hay logo, en la web se muestra el nombre.',
     }),
   ],

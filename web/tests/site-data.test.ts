@@ -229,3 +229,20 @@ test('las opiniones sin texto se descartan y las valoraciones raras se ignoran',
 test('sin opiniones la lista queda vacía', () => {
   expect(toSiteData(empty, 'es').testimonials).toEqual([])
 })
+
+test('los enlaces del panel solo se aceptan si empiezan por http(s)://', () => {
+  const malos: RawSite = {
+    ...raw,
+    settings: { ...raw.settings!, instagramUrl: 'javascript:alert(1)', tiktokUrl: ' JavaScript:alert(1)' },
+    testimonials: [{ ...raw.testimonials![0], sourceUrl: 'data:text/html,<script>alert(1)</script>' }],
+  }
+  const s = toSiteData(malos, 'es')
+  expect(s.instagramUrl).toBe('')
+  expect(s.tiktokUrl).toBeUndefined()
+  expect(s.testimonials[0].sourceUrl).toBeUndefined()
+
+  const buenos = toSiteData(raw, 'es')
+  expect(buenos.instagramUrl).toBe('https://www.instagram.com/cuenta.de.prueba/')
+  expect(buenos.tiktokUrl).toBe('https://www.tiktok.com/@cuenta.de.prueba')
+  expect(buenos.testimonials[0].sourceUrl).toBe('https://www.upwork.com/freelancers/~prueba')
+})

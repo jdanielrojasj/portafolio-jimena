@@ -31,7 +31,7 @@ export const videoPiece = defineType({
       name: 'video',
       title: 'Archivo de vídeo',
       type: 'file',
-      options: {accept: 'video/mp4'},
+      options: {accept: 'video/mp4', storeOriginalFilename: false},
       description:
         'Archivo MP4 vertical de menos de 100 MB. Antes de subirlo, comprímelo con la guía.',
       validation: (rule) => rule.required().error('Falta el archivo de vídeo.'),
@@ -40,7 +40,7 @@ export const videoPiece = defineType({
       name: 'poster',
       title: 'Imagen de portada',
       type: 'image',
-      options: {hotspot: true},
+      options: {hotspot: true, storeOriginalFilename: false},
       description:
         'Opcional. Imagen vertical que se ve antes de reproducir. Si no pones ninguna, se usa el primer instante del vídeo.',
     }),

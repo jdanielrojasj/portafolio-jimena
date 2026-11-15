@@ -7,7 +7,8 @@ Esta guía es para ti, Jimena. Todo lo que se ve en tu web lo cambias desde un p
 ## Lo básico
 
 - **El panel** es una página aparte de tu web. Daniel te dará la dirección. Entras con tu cuenta de Google.
-- **Nada se publica hasta que pulsas "Publicar".** Mientras tanto es un borrador que solo ves tú.
+- **Los textos no salen en la web hasta que pulsas "Publicar".** Mientras tanto son un borrador.
+- **Las fotos y los vídeos son distintos: en cuanto los subes, se pueden ver desde internet**, aunque no hayas publicado y aunque luego los quites. Sube solo lo que quieras que sea público. Nunca documentos, capturas con datos personales ni fotos de tu casa que no quieras enseñar.
 - **Después de publicar, la web tarda uno o dos minutos en actualizarse.** Es normal.
 - **Cada texto tiene dos casillas: Español e Inglés.** El español es obligatorio. Si dejas el inglés vacío, la versión en inglés mostrará el texto en español.
 

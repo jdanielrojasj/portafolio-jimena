@@ -15,3 +15,16 @@ dist-e2e/
 # Vista previa local con el material real (scripts/vista-previa-local.mjs)
 web/public/local/
 web/src/lib/fixtures/site.raw.local.json
+
+# Archivos sueltos en la raíz (fotos, documentos, vídeos): nunca al repositorio público
+/*.jpg
+/*.jpeg
+/*.png
+/*.heic
+/*.pdf
+/*.mp4
+/*.mov
+
+# Demostración local (antes solo en .git/info/exclude)
+web/public/demo/
+web/src/lib/fixtures/site.raw.demo.json

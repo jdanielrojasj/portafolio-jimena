@@ -48,3 +48,17 @@ test('existe el tipo opinión con el texto obligatorio y ayudas en español', ()
   for (const f of type.fields) expect(f.description, f.name).toBeTruthy()
   expect(field('quoteLang').initialValue).toBe('en')
 })
+
+test('ningún campo de foto o archivo guarda el nombre original (el dataset es público)', () => {
+  const encontrados: string[] = []
+  const revisar = (campo: any, ruta: string) => {
+    if (campo.type === 'image' || campo.type === 'file') {
+      encontrados.push(ruta)
+      expect(campo.options?.storeOriginalFilename, ruta).toBe(false)
+    }
+    for (const sub of campo.of ?? []) revisar(sub, `${ruta}[]`)
+    for (const sub of campo.fields ?? []) revisar(sub, `${ruta}.${sub.name}`)
+  }
+  for (const t of schemaTypes as any[]) for (const f of t.fields ?? []) revisar(f, `${t.name}.${f.name}`)
+  expect(encontrados.length).toBe(9)
+})

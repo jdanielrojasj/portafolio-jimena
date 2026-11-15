@@ -23,7 +23,7 @@ export const siteSettings = defineType({
       title: 'Fotos de portada',
       type: 'array',
       group: 'hero',
-      of: [{type: 'image', options: {hotspot: true}}],
+      of: [{type: 'image', options: {hotspot: true, storeOriginalFilename: false}}],
       description:
         'Hasta 2 fotos verticales, a ser posible de la misma sesión. Van a los lados del vídeo.',
       validation: (rule) => rule.max(2).error('Como máximo 2 fotos.'),
@@ -33,7 +33,7 @@ export const siteSettings = defineType({
       title: 'Vídeo de portada',
       type: 'file',
       group: 'hero',
-      options: {accept: 'video/mp4'},
+      options: {accept: 'video/mp4', storeOriginalFilename: false},
       description:
         'Montaje corto y vertical (unos 10 segundos) que se repite sin sonido. Debe ser ligero: menos de 8 MB.',
     }),
@@ -42,7 +42,7 @@ export const siteSettings = defineType({
       title: 'Foto para compartir',
       type: 'image',
       group: 'hero',
-      options: {hotspot: true},
+      options: {hotspot: true, storeOriginalFilename: false},
       description:
         'Opcional. Foto horizontal que se ve al compartir el enlace en WhatsApp, Instagram o LinkedIn. Si no pones ninguna, se usa la primera foto de portada.',
     }),
@@ -66,7 +66,7 @@ export const siteSettings = defineType({
       title: 'Foto de presentación',
       type: 'image',
       group: 'about',
-      options: {hotspot: true},
+      options: {hotspot: true, storeOriginalFilename: false},
       description: 'Opcional. Un retrato vertical.',
     }),
     defineField({

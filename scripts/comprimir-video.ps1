@@ -129,7 +129,7 @@ foreach ($video in $videos) {
   $info = Get-InfoVideo $video.FullName
 
   Write-Host "Comprimiendo $($video.Name)..."
-  $ok = Invoke-Ffmpeg $provisional (@('-i', $video.FullName,
+  $ok = Invoke-Ffmpeg $provisional (@('-i', $video.FullName, '-map_metadata', '-1',
     '-vf', $filtro, '-c:v', 'libx264', '-preset', 'slow', '-crf', $Calidad, '-pix_fmt', 'yuv420p') + $Audio + @('-movflags', '+faststart'))
   if (-not $ok) {
     Write-Host "  No se pudo comprimir $($video.Name)." -ForegroundColor Red
@@ -142,7 +142,7 @@ foreach ($video in $videos) {
   if (-not $Portada -and $info.Apto -and (Get-Item -LiteralPath $provisional).Length -ge $video.Length) {
     Remove-Item -LiteralPath $provisional -Force
     Write-Host '  Ya estaba comprimido: se copia tal cual, sin perder calidad.'
-    $ok = Invoke-Ffmpeg $provisional @('-i', $video.FullName,
+    $ok = Invoke-Ffmpeg $provisional @('-i', $video.FullName, '-map_metadata', '-1',
       '-map', '0:v:0', '-map', '0:a:0?', '-c', 'copy', '-movflags', '+faststart')
     if (-not $ok) {
       Write-Host "  No se pudo copiar $($video.Name)." -ForegroundColor Red
@@ -166,7 +166,7 @@ foreach ($video in $videos) {
     $resolucion = if ($kbps -lt 2500) { '720p' } else { '1080p' }
     Remove-Item -LiteralPath $provisional -Force
     Write-Host "  Pasaba de $LimiteMB MB: se repite en $resolucion con la calidad justa para que quepa..."
-    $ok = Invoke-Ffmpeg $provisional (@('-i', $video.FullName,
+    $ok = Invoke-Ffmpeg $provisional (@('-i', $video.FullName, '-map_metadata', '-1',
       '-vf', $filtroLargo, '-c:v', 'libx264', '-preset', 'slow',
       '-b:v', "${kbps}k", '-maxrate', "$([math]::Floor($kbps * 1.5))k", '-bufsize', "$($kbps * 2)k",
       '-pix_fmt', 'yuv420p') + $Audio + @('-movflags', '+faststart'))

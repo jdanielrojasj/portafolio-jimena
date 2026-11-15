@@ -62,7 +62,11 @@ Estos pasos crean cuentas o publican, así que los hace Daniel.
    - Variables de entorno: `SANITY_PROJECT_ID`, `SANITY_DATASET=production`, `SITE_URL` (la dirección pública, por ejemplo `https://jimenamelendez.pages.dev`) y `NODE_VERSION=24`.
    - Hacer primero una publicación de vista previa y comprobar que construye antes de compartir la dirección.
 6. **Publicar el panel.** En `studio/`: `npx sanity deploy`.
-7. **Publicación automática.** En Cloudflare Pages, crear un *deploy hook*. En sanity.io/manage → API → Webhooks, crear un webhook que llame a esa dirección con POST al crear, actualizar o borrar documentos del dataset `production`, con el filtro `!(_id in path("drafts.**"))` para que guardar un borrador no reconstruya la web (Cloudflare permite 500 construcciones al mes en el plan gratuito). La dirección del hook es secreta: no va al repositorio.
+7. **Publicación automática.** En Cloudflare Pages, crear un *deploy hook*. En sanity.io/manage → API → Webhooks, crear un webhook que llame a esa dirección con POST al crear, actualizar o borrar documentos del dataset `production`, con "Trigger on drafts" desactivado y este filtro, para que guardar un borrador o una versión no reconstruya la web (Cloudflare permite 500 construcciones al mes en el plan gratuito):
+   ```
+   _type in ["siteSettings","videoPiece","videoCategory","actingWork","brand","testimonial","service"] && !(_id in path("drafts.**")) && !(_id in path("versions.**"))
+   ```
+   La dirección del hook es la única credencial (Cloudflare no comprueba firmas): no va al repositorio, ni a issues ni a capturas. Si se filtra, se borra el hook y se crea otro.
 8. **Invitar a Jimena** al proyecto de Sanity como administradora.
 9. **Comprobar el recorrido completo.** Publicar un vídeo de prueba desde el panel y ver que aparece en la web en menos de tres minutos; borrarlo y ver que desaparece.
 
