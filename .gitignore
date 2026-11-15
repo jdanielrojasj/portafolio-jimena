@@ -11,3 +11,7 @@ test-results/
 playwright-report/
 .impeccable/
 dist-e2e/
+
+# Vista previa local con el material real (scripts/vista-previa-local.mjs)
+web/public/local/
+web/src/lib/fixtures/site.raw.local.json
